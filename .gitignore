@@ -1,0 +1,5 @@
+.vscode/
+.env
+backend/app/__pycache__
+backend/models/__pycache__
+backend/instance/blog.db
