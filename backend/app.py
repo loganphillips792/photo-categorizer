@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
 
+# Load environment variables from .env file
+load_dotenv()
 dictConfig({
     'version': 1,
     'formatters': {'default': {
@@ -25,10 +27,25 @@ dictConfig({
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    app.logger.info('getting all blog posts...')
-    return 'Hello from Flask Backend!'
+# Configure the database URI. Using SQLite for this example.
+# It's recommended to use environment variables for sensitive data.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///mydatabase.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Disable modification tracking
+
+# Initialize SQLAlchemy AFTER app configuration
+db = SQLAlchemy(app)
+
+# Import blueprints AFTER db is initialized to avoid circular imports
+from routes import main_bp
+import models # Import models to ensure they are registered with SQLAlchemy
+
+# Register the Blueprint
+app.register_blueprint(main_bp)
+
+# Create database tables if they don't exist
+# This needs the app context
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,5 +1,5 @@
 .vscode/
 .env
-backend/app/__pycache__
+backend/__pycache__/
 backend/models/__pycache__
-backend/instance/blog.db
+backend/instance/
