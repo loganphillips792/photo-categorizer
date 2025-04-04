@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout/Layout';
+import AllPhotosPage from './pages/AllPhotosPage';
+import SettingsPage from './pages/SettingsPage';
+import PhotoUpload from './components/PhotoUpload/PhotoUpload'; // Import PhotoUpload
+import './App.css'; // Keep or modify global styles as needed
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Placeholder function for file selection
+  const handleFilesSelected = (files: FileList | null) => {
+    if (files) {
+      console.log('Files selected:', files);
+      // TODO: Implement actual file handling logic (e.g., upload, state update)
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* Index route for the default page */}
+        <Route index element={<PhotoUpload onFilesSelected={handleFilesSelected} />} /> {/* Render PhotoUpload on the index route */}
+        <Route path="all" element={<AllPhotosPage />} /> {/* Add route for all photos */}
+        <Route path="settings" element={<SettingsPage />} />
+        {/* Add other routes here as needed */}
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;

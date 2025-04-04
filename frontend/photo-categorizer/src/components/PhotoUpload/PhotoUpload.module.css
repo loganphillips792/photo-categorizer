@@ -1,0 +1,28 @@
+.uploadContainer {
+  padding: 20px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.uploadButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.uploadButton:hover {
+  background-color: #0056b3;
+}
+
+.info {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #666;
+}
