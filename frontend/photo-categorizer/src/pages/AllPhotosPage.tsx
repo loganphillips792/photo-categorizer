@@ -124,6 +124,7 @@ const AllPhotosPage: React.FC = () => {
 
     // Function to handle info icon click
     const handleInfoClick = (photo: Photo) => {
+        console.log("Info icon clicked for photo:", photo.id); // Added console log
         setSelectedPhoto(photo);
         openModal();
     };
@@ -236,7 +237,7 @@ const AllPhotosPage: React.FC = () => {
                                             <Text fw={500} size="sm" truncate="end">
                                                 placeholder.jpg
                                             </Text>
-                                            <ActionIcon variant="subtle" color="gray">
+                                            <ActionIcon variant="subtle" color="gray" onClick={() => handleInfoClick(photo)}>
                                                 <IconInfoCircle size={16} />
                                             </ActionIcon>
                                         </Group>
