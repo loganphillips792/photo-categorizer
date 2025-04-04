@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Container, Title, Text, Grid, Card, Image, Badge, Stack } from '@mantine/core';
+import { Container, Title, Text, Grid, Card, Image, Badge, Stack, Group, ActionIcon, Box, Modal, SimpleGrid } from '@mantine/core'; // Added Modal, SimpleGrid
+import { useDisclosure } from '@mantine/hooks'; // Added useDisclosure
+import { IconInfoCircle } from '@tabler/icons-react';
 // import PhotoUpload from '../components/PhotoUpload/PhotoUpload'; // Removed - Upload likely happens elsewhere now
 import FilterControls from '../components/FilterControls/FilterControls';
 
@@ -31,6 +33,8 @@ const AllPhotosPage: React.FC = () => {
   ]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   // handleFilesSelected might be triggered from a different component now (e.g., a dedicated upload button/page)
   // Keeping the logic here for now, assuming it might be called from somewhere
@@ -96,6 +100,12 @@ const AllPhotosPage: React.FC = () => {
     }
   };
 
+  // Function to handle info icon click
+  const handleInfoClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
+    openModal();
+  };
+
   return (
     <Container size="xl"> {/* Use Mantine Container */}
       <Stack gap="lg"> {/* Stack for vertical spacing */}
@@ -124,21 +134,42 @@ const AllPhotosPage: React.FC = () => {
             <>
               {Array.from({ length: 8 }).map((_, index) => (
                 <Grid.Col key={`placeholder-${index}`} span={{ base: 12, xs: 6, sm: 4, md: 3 }}>
-                  <Card shadow="sm" padding="sm" radius="md" withBorder>
-                    <Card.Section>
-                      <Image
-                        src="https://via.placeholder.com/150/CCCCCC/FFFFFF?text=Placeholder"
-                        height={160}
-                        alt="Placeholder image"
-                      />
-                    </Card.Section>
-                    <Stack mt="md" mb="xs" gap="xs">
-                       <Text fw={500} size="sm" truncate="end">Placeholder</Text>
-                       <Badge color="gray" variant="light">
-                         No Status
-                       </Badge>
-                    </Stack>
-                  </Card>
+                  <Card shadow="sm" padding="lg" radius="md" withBorder>
+                     <Card.Section>
+                       {/* Use Box for positioning context */}
+                       <Box pos="relative">
+                         <Image
+                           src="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+" // Updated placeholder
+                           height={160}
+                           alt="Placeholder image"
+                         />
+                         {/* Placeholder Category Badge Overlay */}
+                         <Badge
+                           color="dark"
+                           variant="filled"
+                           radius="xl"
+                           pos="absolute"
+                           top={8}
+                           left={8}
+                         >
+                           Category
+                         </Badge>
+                       </Box>
+                     </Card.Section>
+
+                     {/* Group for filename and info icon */}
+                     <Group justify="space-between" mt="md" mb={5}>
+                       <Text fw={500} size="sm" truncate="end">placeholder.jpg</Text>
+                       <ActionIcon variant="subtle" color="gray">
+                         <IconInfoCircle size={16} />
+                       </ActionIcon>
+                     </Group>
+
+                     {/* Placeholder Date */}
+                     <Text size="xs" c="dimmed">
+                       MM/DD/YYYY, HH:MM:SS AM/PM
+                     </Text>
+                   </Card>
                 </Grid.Col>
               ))}
             </>
@@ -146,32 +177,82 @@ const AllPhotosPage: React.FC = () => {
           {/* Render actual photos if they exist and match filters */}
           {filteredPhotos.map((photo) => (
             <Grid.Col key={photo.id} span={{ base: 12, xs: 6, sm: 4, md: 3 }}> {/* Responsive columns */}
-              <Card shadow="sm" padding="sm" radius="md" withBorder>
-                <Card.Section>
-                  <Image
-                    src={photo.url}
-                    height={160}
-                    alt={photo.name}
-                    fallbackSrc="https://via.placeholder.com/150" // Optional fallback
-                  />
-                </Card.Section>
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                 <Card.Section>
+                   <Box pos="relative">
+                     <Image
+                       src={photo.url}
+                       height={160}
+                       alt={photo.name}
+                       fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+" // Consistent placeholder
+                     />
+                     {/* Actual Category Badge Overlay */}
+                     {photo.categoryId && (
+                       <Badge
+                         color="dark" // Match style from image
+                         variant="filled"
+                         radius="xl"
+                         pos="absolute"
+                         top={8}
+                         left={8}
+                       >
+                         {getCategoryName(photo.categoryId) || 'Unknown'}
+                       </Badge>
+                     )}
+                   </Box>
+                 </Card.Section>
 
-                <Stack mt="md" mb="xs" gap="xs">
+                 {/* Group for filename and info icon */}
+                 <Group justify="space-between" mt="md" mb={5}>
                    <Text fw={500} size="sm" truncate="end">{photo.name}</Text>
-                   <Badge color={getStatusColor(photo.status)} variant="light">
-                     {photo.status}
-                   </Badge>
-                   {photo.categoryId && (
-                     <Badge color="blue" variant="outline">
-                       {getCategoryName(photo.categoryId) || 'Unknown'}
-                     </Badge>
-                   )}
-                </Stack>
-              </Card>
+                   <ActionIcon variant="subtle" color="gray" onClick={() => handleInfoClick(photo)}>
+                     <IconInfoCircle size={16} />
+                   </ActionIcon>
+                 </Group>
+
+                 {/* Placeholder Date - Add actual date later */}
+                 <Text size="xs" c="dimmed">
+                   {/* TODO: Replace with actual photo date */}
+                   MM/DD/YYYY, HH:MM:SS AM/PM
+                 </Text>
+               </Card>
             </Grid.Col>
           ))}
         </Grid>
       </Stack>
+
+      {/* Photo Details Modal */}
+      <Modal opened={modalOpened} onClose={closeModal} title="Photo Details" centered size="lg">
+        {selectedPhoto && (
+          <Stack>
+            <Text size="sm" c="dimmed">Information about this photo</Text>
+            <Image
+              src={selectedPhoto.url}
+              height={200} // Adjust height as needed
+              fit="contain"
+              alt={selectedPhoto.name}
+              fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+"
+              radius="sm"
+              style={{ backgroundColor: '#f0f0f0' }} // Background for containment
+            />
+            <SimpleGrid cols={2} spacing="xs" verticalSpacing="xs">
+              <Text fw={500} size="sm">Filename:</Text>
+              <Text size="sm">{selectedPhoto.name}</Text>
+
+              <Text fw={500} size="sm">Path:</Text>
+              {/* TODO: Replace with actual path */}
+              <Text size="sm">/{selectedPhoto.categoryId ? getCategoryName(selectedPhoto.categoryId)?.toLowerCase() : 'uncategorized'}/{selectedPhoto.name}</Text>
+
+              <Text fw={500} size="sm">Category:</Text>
+              <Text size="sm">{selectedPhoto.categoryId ? getCategoryName(selectedPhoto.categoryId) : 'Uncategorized'}</Text>
+
+              <Text fw={500} size="sm">Processed:</Text>
+              {/* TODO: Replace with actual processed date */}
+              <Text size="sm">MM/DD/YYYY, HH:MM:SS AM/PM</Text>
+            </SimpleGrid>
+          </Stack>
+        )}
+      </Modal>
     </Container>
   );
 };
