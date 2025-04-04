@@ -1,41 +1,39 @@
 import React, { useState, useMemo } from 'react';
-import PhotoUpload from '../components/PhotoUpload/PhotoUpload';
+import { Container, Title, Text, Grid, Card, Image, Badge, Stack } from '@mantine/core';
+// import PhotoUpload from '../components/PhotoUpload/PhotoUpload'; // Removed - Upload likely happens elsewhere now
 import FilterControls from '../components/FilterControls/FilterControls';
 
 // Define the possible filter types
 type StatusFilter = 'all' | 'processed' | 'categorized' | 'uncategorized';
 
-// Interface for a category (matching SettingsPage)
+// Interface for a category
 interface Category {
   id: string;
   name: string;
 }
 
-// Updated interface for a photo
+// Interface for a photo
 interface Photo {
   id: string;
   name: string;
   url: string;
   status: 'uncategorized' | 'categorized' | 'processing';
-  categoryId?: string; // Use categoryId
+  categoryId?: string;
 }
 
 const AllPhotosPage: React.FC = () => {
-  // State for photos
+  // State remains the same
   const [photos, setPhotos] = useState<Photo[]>([]);
-  // State for upload status
   const [uploadStatus, setUploadStatus] = useState<string>('');
-  // State for available categories (fetch or get from shared state later)
   const [categories, setCategories] = useState<Category[]>([
-    // Example categories - should match SettingsPage or come from backend
     { id: 'cat-1', name: 'Work' },
     { id: 'cat-2', name: 'Personal' },
   ]);
-
-  // State for filters
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all'); // 'all' or category ID
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
+  // handleFilesSelected might be triggered from a different component now (e.g., a dedicated upload button/page)
+  // Keeping the logic here for now, assuming it might be called from somewhere
   const handleFilesSelected = (files: FileList) => {
     console.log('Files selected in AllPhotosPage:', files);
     setUploadStatus(`Processing ${files.length} files...`);
@@ -47,17 +45,15 @@ const AllPhotosPage: React.FC = () => {
       name: file.name,
       url: URL.createObjectURL(file),
       status: 'processing',
-      // categoryId: undefined, // Initially no category
     }));
 
     setPhotos(prevPhotos => [...prevPhotos, ...newPhotos]);
 
-    // Simulate upload completion and initial categorization (replace with backend logic)
+    // Simulate upload completion
     setTimeout(() => {
       setUploadStatus(`Upload simulation complete for ${files.length} files.`);
       setPhotos(currentPhotos => currentPhotos.map(p => {
         if (p.id.startsWith('temp-')) {
-          // Simulate some getting categorized, some not
           const randomStatus = Math.random() > 0.5 ? 'categorized' : 'uncategorized';
           const randomCategory = randomStatus === 'categorized' && categories.length > 0
             ? categories[Math.floor(Math.random() * categories.length)].id
@@ -69,73 +65,91 @@ const AllPhotosPage: React.FC = () => {
     }, 2000);
   };
 
-  // Memoized filtered photos
+  // Memoized filtered photos (logic remains the same)
   const filteredPhotos = useMemo(() => {
     return photos.filter(photo => {
-      // Status filter logic
       const statusMatch = statusFilter === 'all' ||
                           (statusFilter === 'processed' && photo.status === 'processing') ||
                           (statusFilter === 'categorized' && photo.status === 'categorized') ||
                           (statusFilter === 'uncategorized' && photo.status === 'uncategorized');
-
-      // Category filter logic
       const categoryMatch = categoryFilter === 'all' || photo.categoryId === categoryFilter;
-
       return statusMatch && categoryMatch;
     });
   }, [photos, statusFilter, categoryFilter]);
 
-  // Handlers for filter changes
-  const handleStatusFilterChange = (filter: StatusFilter) => {
-    setStatusFilter(filter);
-  };
+  // Filter change handlers remain the same
+  const handleStatusFilterChange = (filter: StatusFilter) => setStatusFilter(filter);
+  const handleCategoryFilterChange = (categoryId: string) => setCategoryFilter(categoryId);
 
-  const handleCategoryFilterChange = (categoryId: string) => {
-    setCategoryFilter(categoryId);
-  };
-
-  // Helper to get category name from ID
+  // Helper to get category name
   const getCategoryName = (categoryId?: string): string | undefined => {
     return categories.find(cat => cat.id === categoryId)?.name;
   }
 
+  // Helper to get status badge color
+  const getStatusColor = (status: Photo['status']): string => {
+    switch (status) {
+      case 'processing': return 'blue';
+      case 'categorized': return 'green';
+      case 'uncategorized': return 'orange';
+      default: return 'gray';
+    }
+  };
+
   return (
-    <div>
-      <h1>All Photos</h1>
+    <Container size="xl"> {/* Use Mantine Container */}
+      <Stack gap="lg"> {/* Stack for vertical spacing */}
+        <Title order={1}>All Photos</Title>
 
-      {/* PhotoUpload component removed from this page */}
-      {uploadStatus && <p>{uploadStatus}</p>}
+        {/* Display upload status */}
+        {uploadStatus && <Text c="dimmed">{uploadStatus}</Text>}
 
-      {/* --- Filter Controls --- */}
-      <FilterControls
-        categories={categories}
-        currentStatusFilter={statusFilter}
-        currentCategoryFilter={categoryFilter}
-        onStatusFilterChange={handleStatusFilterChange}
-        onCategoryFilterChange={handleCategoryFilterChange}
-      />
-      {/* --- End Filter Controls --- */}
+        {/* Filter Controls (already refactored) */}
+        <FilterControls
+          categories={categories}
+          currentStatusFilter={statusFilter}
+          currentCategoryFilter={categoryFilter}
+          onStatusFilterChange={handleStatusFilterChange}
+          onCategoryFilterChange={handleCategoryFilterChange}
+        />
 
+        {/* Photo Grid */}
+        <Grid gutter="md">
+          {filteredPhotos.length === 0 && photos.length > 0 && (
+             <Grid.Col span={12}><Text>No photos match the current filters.</Text></Grid.Col>
+          )}
+          {filteredPhotos.length === 0 && photos.length === 0 && !uploadStatus.includes('Processing') && (
+            <Grid.Col span={12}><Text>No photos uploaded yet.</Text></Grid.Col> // Simplified message
+          )}
+          {filteredPhotos.map((photo) => (
+            <Grid.Col key={photo.id} span={{ base: 12, xs: 6, sm: 4, md: 3 }}> {/* Responsive columns */}
+              <Card shadow="sm" padding="sm" radius="md" withBorder>
+                <Card.Section>
+                  <Image
+                    src={photo.url}
+                    height={160}
+                    alt={photo.name}
+                    fallbackSrc="https://via.placeholder.com/150" // Optional fallback
+                  />
+                </Card.Section>
 
-      {/* Display the list of filtered photos */}
-      {/* Use CSS Grid for photo layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px', marginTop: '20px' }}>
-        {filteredPhotos.length === 0 && photos.length > 0 && (
-           <p>No photos match the current filters.</p>
-        )}
-         {filteredPhotos.length === 0 && photos.length === 0 && !uploadStatus.includes('Processing') && (
-          <p>No photos uploaded yet. Use the button above to select a directory.</p>
-        )}
-        {filteredPhotos.map((photo) => (
-          <div key={photo.id} style={{ border: '1px solid #eee', padding: '10px', width: '150px' }}>
-            <img src={photo.url} alt={photo.name} style={{ maxWidth: '100%', height: 'auto' }} />
-            <p style={{ fontSize: '0.8rem', wordBreak: 'break-all' }}>{photo.name}</p>
-            <p style={{ fontSize: '0.8rem', fontStyle: 'italic' }}>Status: {photo.status}</p>
-            {photo.categoryId && <p style={{ fontSize: '0.8rem' }}>Category: {getCategoryName(photo.categoryId) || 'Unknown'}</p>}
-          </div>
-        ))}
-      </div>
-    </div>
+                <Stack mt="md" mb="xs" gap="xs">
+                   <Text fw={500} size="sm" truncate="end">{photo.name}</Text>
+                   <Badge color={getStatusColor(photo.status)} variant="light">
+                     {photo.status}
+                   </Badge>
+                   {photo.categoryId && (
+                     <Badge color="blue" variant="outline">
+                       {getCategoryName(photo.categoryId) || 'Unknown'}
+                     </Badge>
+                   )}
+                </Stack>
+              </Card>
+            </Grid.Col>
+          ))}
+        </Grid>
+      </Stack>
+    </Container>
   );
 };
 

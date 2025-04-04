@@ -1,47 +1,52 @@
 import React, { ChangeEvent, useRef } from 'react';
-import styles from './PhotoUpload.module.css';
+import { FileButton, Button, Text, Stack } from '@mantine/core';
 
 interface PhotoUploadProps {
-  onFilesSelected: (files: FileList) => void; // Callback to handle selected files
+  onFilesSelected: (files: FileList) => void; // Callback remains the same
 }
 
 const PhotoUpload: React.FC<PhotoUploadProps> = ({ onFilesSelected }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Keep the original file change handler
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      console.log(`Selected ${event.target.files.length} files.`);
+      console.log(`Selected ${event.target.files.length} files from directory.`);
       onFilesSelected(event.target.files);
-      // Optionally clear the input value if you want to allow re-selecting the same directory
+      // Clear the value to allow selecting the same directory again if needed
       // event.target.value = '';
     }
   };
 
-  const handleClick = () => {
-    // Trigger the hidden file input click
+  // Click handler for the hidden input (still needed)
+  const triggerInputClick = () => {
     inputRef.current?.click();
   };
 
   return (
-    <div className={styles.uploadContainer}>
+    <Stack align="center" gap="md"> {/* Use Stack for layout */}
+      {/* Hidden input remains largely the same */}
       <input
         type="file"
         ref={inputRef}
         onChange={handleFileChange}
-        style={{ display: 'none' }} // Hide the default input
-        // Non-standard attributes for directory selection
+        style={{ display: 'none' }}
+        // Directory selection attributes
         webkitdirectory=""
         mozdirectory=""
         directory=""
-        multiple // Allow multiple file selection as fallback/part of directory
+        multiple // Keep multiple for fallback/consistency
       />
-      <button onClick={handleClick} className={styles.uploadButton}>
+
+      {/* Use Mantine Button to trigger the hidden input */}
+      <Button onClick={triggerInputClick}>
         Upload Screenshot Directory
-      </button>
-      <p className={styles.info}>
+      </Button>
+
+      <Text size="sm" c="dimmed"> {/* Use Mantine Text */}
         Select the folder containing your screenshots.
-      </p>
-    </div>
+      </Text>
+    </Stack>
   );
 };
 

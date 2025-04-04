@@ -1,11 +1,11 @@
 import React from 'react';
-import styles from './FilterControls.module.css';
+import { Stack, Title, SegmentedControl, Select } from '@mantine/core';
 
-// Define the possible filter types
+// Define the possible filter types (remains the same)
 type StatusFilter = 'all' | 'processed' | 'categorized' | 'uncategorized';
 
 interface FilterControlsProps {
-  categories: { id: string; name: string }[]; // Pass available categories for filtering
+  categories: { id: string; name: string }[];
   currentStatusFilter: StatusFilter;
   currentCategoryFilter: string; // ID of the selected category, or 'all'
   onStatusFilterChange: (filter: StatusFilter) => void;
@@ -19,39 +19,41 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   onStatusFilterChange,
   onCategoryFilterChange,
 }) => {
-  return (
-    <div className={styles.filterContainer}>
-      <h4>Filter by Status:</h4>
-      <div className={styles.filterGroup}>
-        {(['all', 'processed', 'categorized', 'uncategorized'] as StatusFilter[]).map((status) => (
-          <button
-            key={status}
-            className={`${styles.filterButton} ${currentStatusFilter === status ? styles.active : ''}`}
-            onClick={() => onStatusFilterChange(status)}
-          >
-            {/* Capitalize first letter */}
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </button>
-        ))}
-      </div>
+  // Prepare data for Mantine components
+  const statusFilterData = [
+    { label: 'All', value: 'all' },
+    { label: 'Processed', value: 'processed' },
+    { label: 'Categorized', value: 'categorized' },
+    { label: 'Uncategorized', value: 'uncategorized' },
+  ];
 
-      <h4>Filter by Category:</h4>
-      {/* Replace buttons with a dropdown */}
-      <div className={styles.filterGroup}>
-        <select
-          className={styles.filterSelect} // Add a class for styling if needed
-          value={currentCategoryFilter}
-          onChange={(e) => onCategoryFilterChange(e.target.value)}
-        >
-          <option value="all">All Categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
+  const categoryFilterData = [
+    { label: 'All Categories', value: 'all' },
+    ...categories.map((category) => ({
+      label: category.name,
+      value: category.id,
+    })),
+  ];
+
+  return (
+    <Stack gap="md"> {/* Use Stack for vertical layout */}
+      <Title order={4}>Filter by Status:</Title>
+      <SegmentedControl
+        data={statusFilterData}
+        value={currentStatusFilter}
+        onChange={(value) => onStatusFilterChange(value as StatusFilter)} // Mantine passes the value directly
+        fullWidth // Optional: make it take full width
+      />
+
+      <Title order={4}>Filter by Category:</Title>
+      <Select
+        data={categoryFilterData}
+        value={currentCategoryFilter}
+        onChange={(value) => onCategoryFilterChange(value || 'all')} // Mantine passes value, handle null case
+        placeholder="Select category"
+        allowDeselect={false} // Prevent deselecting to null if 'all' is the default
+      />
+    </Stack>
   );
 };
 
