@@ -1,16 +1,16 @@
 .layout {
-  display: flex;
-  /* Ensure layout takes full height if needed, adjust as necessary */
-  min-height: 100vh;
+    display: flex;
+    /* Ensure layout takes full height if needed, adjust as necessary */
+    min-height: 100vh;
 }
 
 .content {
-  flex-grow: 1;
-  padding: 20px;
-  /* Add padding or margin to prevent content from hiding behind a fixed/absolute menu */
-  margin-left: 0; /* Adjust if the menu is always visible */
-  /* Example: Add margin-right if burger menu slides from right */
-  /* margin-right: 60px; */ /* Space for the burger icon */
+    flex-grow: 1;
+    padding: 20px;
+    /* Add padding or margin to prevent content from hiding behind a fixed/absolute menu */
+    margin-left: 0; /* Adjust if the menu is always visible */
+    /* Example: Add margin-right if burger menu slides from right */
+    /* margin-right: 60px; */ /* Space for the burger icon */
 }
 
 /* Add more specific layout styles as the design evolves */
