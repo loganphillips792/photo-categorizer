@@ -10,6 +10,7 @@ const Layout: React.FC = () => {
 
   // Placeholder navigation links
   const navLinks = [
+    { label: 'Upload Files', path: '/' }, // Added Upload Files link
     { label: 'All Photos', path: '/all' }, // Correct path for AllPhotosPage
     { label: 'Settings', path: '/settings' },
     // Add more links as needed

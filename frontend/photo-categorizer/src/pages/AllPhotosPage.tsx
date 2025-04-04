@@ -115,12 +115,35 @@ const AllPhotosPage: React.FC = () => {
 
         {/* Photo Grid */}
         <Grid gutter="md">
+          {/* Show message if filters result in no photos, but photos exist */}
           {filteredPhotos.length === 0 && photos.length > 0 && (
              <Grid.Col span={12}><Text>No photos match the current filters.</Text></Grid.Col>
           )}
-          {filteredPhotos.length === 0 && photos.length === 0 && !uploadStatus.includes('Processing') && (
-            <Grid.Col span={12}><Text>No photos uploaded yet.</Text></Grid.Col> // Simplified message
+          {/* Show placeholder grid if no photos are uploaded */}
+          {photos.length === 0 && !uploadStatus.includes('Processing') && (
+            <>
+              {Array.from({ length: 8 }).map((_, index) => (
+                <Grid.Col key={`placeholder-${index}`} span={{ base: 12, xs: 6, sm: 4, md: 3 }}>
+                  <Card shadow="sm" padding="sm" radius="md" withBorder>
+                    <Card.Section>
+                      <Image
+                        src="https://via.placeholder.com/150/CCCCCC/FFFFFF?text=Placeholder"
+                        height={160}
+                        alt="Placeholder image"
+                      />
+                    </Card.Section>
+                    <Stack mt="md" mb="xs" gap="xs">
+                       <Text fw={500} size="sm" truncate="end">Placeholder</Text>
+                       <Badge color="gray" variant="light">
+                         No Status
+                       </Badge>
+                    </Stack>
+                  </Card>
+                </Grid.Col>
+              ))}
+            </>
           )}
+          {/* Render actual photos if they exist and match filters */}
           {filteredPhotos.map((photo) => (
             <Grid.Col key={photo.id} span={{ base: 12, xs: 6, sm: 4, md: 3 }}> {/* Responsive columns */}
               <Card shadow="sm" padding="sm" radius="md" withBorder>
