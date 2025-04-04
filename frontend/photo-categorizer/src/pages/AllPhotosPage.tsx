@@ -135,6 +135,15 @@ const AllPhotosPage: React.FC = () => {
     const processingCount = photos.filter(p => p.status === 'processing').length;
     const uncategorizedCount = photos.filter(p => p.status === 'uncategorized').length;
 
+    // Define mock photos for placeholder state
+    const mockPhotos: Photo[] = Array.from({ length: 8 }).map((_, index) => ({
+        id: `mock-${index + 1}`,
+        name: `mock_image_${index + 1}.jpg`,
+        url: `https://via.placeholder.com/300x200/e0e0e0/aaaaaa?text=Mock+${index + 1}`,
+        status: index % 3 === 0 ? "categorized" : index % 3 === 1 ? "uncategorized" : "processing", // Cycle through statuses
+        categoryId: index % 3 === 0 ? categories[index % categories.length]?.id : undefined, // Assign category if categorized
+    }));
+
     return (
         <Container size="xl">
             {" "}
@@ -205,46 +214,64 @@ const AllPhotosPage: React.FC = () => {
                         </Grid.Col>
                     )}
                     {/* Show placeholder grid if no photos are uploaded */}
+                    {/* Show mock photo grid if no actual photos are loaded and not processing */}
                     {photos.length === 0 && !uploadStatus.includes("Processing") && (
                         <>
-                            {Array.from({ length: 8 }).map((_, index) => (
-                                <Grid.Col key={`placeholder-${index}`} span={{ base: 12, xs: 6, sm: 4, md: 3 }}>
+                            {mockPhotos.map((photo) => (
+                                <Grid.Col key={photo.id} span={{ base: 12, xs: 6, sm: 4, md: 3 }}>
                                     <Card shadow="sm" padding="lg" radius="md" withBorder>
                                         <Card.Section>
-                                            {/* Use Box for positioning context */}
                                             <Box pos="relative">
                                                 <Image
-                                                    src="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+" // Updated placeholder
+                                                    // src={photo.url}
+                                                    src="https://images.pexels.com/photos/130576/pexels-photo-130576.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                                                     height={160}
-                                                    alt="Placeholder image"
+                                                    alt={photo.name}
+                                                    // fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=Error" // Fallback for mock
+                                                    fallbackSrc="https://images.pexels.com/photos/130576/pexels-photo-130576.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                                                 />
-                                                {/* Placeholder Category Badge Overlay */}
-                                                <Badge
-                                                    color="dark"
-                                                    variant="filled"
-                                                    radius="xl"
-                                                    pos="absolute"
-                                                    top={8}
-                                                    left={8}
-                                                >
-                                                    Category
-                                                </Badge>
+                                                {/* Mock Category Badge Overlay */}
+                                                {photo.categoryId && (
+                                                    <Badge
+                                                        color="dark"
+                                                        variant="filled"
+                                                        radius="xl"
+                                                        pos="absolute"
+                                                        top={8}
+                                                        left={8}
+                                                    >
+                                                        {getCategoryName(photo.categoryId) || "Category"}
+                                                    </Badge>
+                                                )}
+                                                 {!photo.categoryId && ( // Show generic badge if no category
+                                                    <Badge
+                                                        color="gray" // Different color for uncategorized/processing mock
+                                                        variant="light"
+                                                        radius="xl"
+                                                        pos="absolute"
+                                                        top={8}
+                                                        left={8}
+                                                    >
+                                                        {photo.status === 'uncategorized' ? 'Uncategorized' : 'Processing'}
+                                                    </Badge>
+                                                )}
                                             </Box>
                                         </Card.Section>
 
                                         {/* Group for filename and info icon */}
                                         <Group justify="space-between" mt="md" mb={5}>
                                             <Text fw={500} size="sm" truncate="end">
-                                                placeholder.jpg
+                                                {photo.name}
                                             </Text>
+                                            {/* Reinstate onClick for mock photos */}
                                             <ActionIcon variant="subtle" color="gray" onClick={() => handleInfoClick(photo)}>
                                                 <IconInfoCircle size={16} />
                                             </ActionIcon>
                                         </Group>
 
-                                        {/* Placeholder Date */}
+                                        {/* Placeholder Date (can be enhanced later) */}
                                         <Text size="xs" c="dimmed">
-                                            MM/DD/YYYY, HH:MM:SS AM/PM
+                                            Mock Date Placeholder
                                         </Text>
                                     </Card>
                                 </Grid.Col>
@@ -263,7 +290,8 @@ const AllPhotosPage: React.FC = () => {
                                             src={photo.url}
                                             height={160}
                                             alt={photo.name}
-                                            fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+" // Consistent placeholder
+                                            // fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+" // Consistent placeholder
+                                            fallbackSrc="https://images.pexels.com/photos/130576/pexels-photo-130576.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                                         />
                                         {/* Actual Category Badge Overlay */}
                                         {photo.categoryId && (
@@ -313,7 +341,8 @@ const AllPhotosPage: React.FC = () => {
                             height={200} // Adjust height as needed
                             fit="contain"
                             alt={selectedPhoto.name}
-                            fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+"
+                            // fallbackSrc="https://via.placeholder.com/300x200/f0f0f0/cccccc?text=+"
+                            fallbackSrc="https://images.pexels.com/photos/130576/pexels-photo-130576.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                             radius="sm"
                             style={{ backgroundColor: "#f0f0f0" }} // Background for containment
                         />
