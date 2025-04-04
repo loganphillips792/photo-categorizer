@@ -4,6 +4,7 @@ import Layout from "./components/Layout/Layout";
 import PhotoUpload from "./components/PhotoUpload/PhotoUpload"; // Import PhotoUpload
 import AllPhotosPage from "./pages/AllPhotosPage";
 import SettingsPage from "./pages/SettingsPage";
+import CategoriesPage from "./pages/CategoriesPage"; // Import the new page
 
 function App() {
     // Placeholder function for file selection
@@ -21,8 +22,8 @@ function App() {
                 <Route index element={<PhotoUpload onFilesSelected={handleFilesSelected} />} />{" "}
                 {/* Render PhotoUpload on the index route */}
                 <Route path="all" element={<AllPhotosPage />} /> {/* Add route for all photos */}
+                <Route path="categories" element={<CategoriesPage />} /> {/* Add route for categories */}
                 <Route path="settings" element={<SettingsPage />} />
-                {/* Add other routes here as needed */}
             </Route>
         </Routes>
     );
