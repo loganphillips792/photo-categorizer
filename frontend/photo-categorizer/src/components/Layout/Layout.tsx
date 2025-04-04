@@ -1,4 +1,4 @@
-import { AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton, ActionIcon, Box } from "@mantine/core"; // Added ActionIcon, Box
+import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton } from "@mantine/core"; // Added ActionIcon, Box
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"; // Added icons
 import React from "react";
@@ -62,12 +62,12 @@ const Layout: React.FC = () => {
                     aria-label={desktopCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                     visibleFrom="sm" // Only show on sm+ screens
                     style={{
-                        position: 'absolute',
-                        top: 'calc(var(--app-shell-header-height, 0px) + 20px)', // Position below header
-                        left: desktopCollapsed ? '10px' : 'calc(300px - 18px)', // Adjust left based on state
+                        position: "absolute",
+                        top: "calc(var(--app-shell-header-height, 0px) + 20px)", // Position below header
+                        left: desktopCollapsed ? "10px" : "calc(300px - 18px)", // Adjust left based on state
                         zIndex: 101, // Ensure it's above navbar
-                        transition: 'left 0.2s ease', // Smooth transition
-                        backgroundColor: 'var(--mantine-color-body)', // Match background
+                        transition: "left 0.2s ease", // Smooth transition
+                        backgroundColor: "var(--mantine-color-body)", // Match background
                     }}
                 >
                     {desktopCollapsed ? <IconChevronRight size={18} /> : <IconChevronLeft size={18} />}

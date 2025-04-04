@@ -3,8 +3,8 @@ import "./App.css"; // Keep or modify global styles as needed
 import Layout from "./components/Layout/Layout";
 import PhotoUpload from "./components/PhotoUpload/PhotoUpload"; // Import PhotoUpload
 import AllPhotosPage from "./pages/AllPhotosPage";
-import SettingsPage from "./pages/SettingsPage";
 import CategoriesPage from "./pages/CategoriesPage"; // Import the new page
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
     // Placeholder function for file selection

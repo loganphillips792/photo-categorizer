@@ -15,11 +15,11 @@ import {
 } from "@mantine/core"; // Added Modal, SimpleGrid
 import { useDisclosure } from "@mantine/hooks"; // Added useDisclosure
 import { IconInfoCircle } from "@tabler/icons-react";
-import React, { useMemo, useState, useEffect } from "react"; // Added useEffect
+import React, { useMemo, useState } from "react"; // Added useEffect
 // import PhotoUpload from '../components/PhotoUpload/PhotoUpload'; // Removed - Upload likely happens elsewhere now
 import FilterControls from "../components/FilterControls/FilterControls";
-import { Category, Photo, PhotoStatus } from "../types"; // Import types
 import mockData from "../lib/mock-data.json"; // Import mock data
+import { Category, Photo, PhotoStatus } from "../types"; // Import types
 
 // Type definitions are now imported from ../types.ts
 // StatusFilter type alias is replaced by PhotoStatus | 'all' where needed
@@ -103,11 +103,16 @@ const AllPhotosPage: React.FC = () => {
     // Update getStatusColor to use PhotoStatus
     const getStatusColor = (status: PhotoStatus): string => {
         switch (status) {
-            case "processing": return "blue";
-            case "categorized": return "green";
-            case "uncategorized": return "orange";
-            case "pending": return "yellow"; // Add color for pending
-            default: return "gray";
+            case "processing":
+                return "blue";
+            case "categorized":
+                return "green";
+            case "uncategorized":
+                return "orange";
+            case "pending":
+                return "yellow"; // Add color for pending
+            default:
+                return "gray";
         }
     };
 
@@ -121,10 +126,10 @@ const AllPhotosPage: React.FC = () => {
     // Calculate counts for the summary
     const totalPhotos = photos.length;
     // Update counts based on PhotoStatus
-    const categorizedCount = photos.filter(p => p.status === 'categorized').length;
-    const processingCount = photos.filter(p => p.status === 'processing').length;
-    const uncategorizedCount = photos.filter(p => p.status === 'uncategorized').length;
-    const pendingCount = photos.filter(p => p.status === 'pending').length; // Add pending count if needed for summary
+    const categorizedCount = photos.filter((p) => p.status === "categorized").length;
+    const processingCount = photos.filter((p) => p.status === "processing").length;
+    const uncategorizedCount = photos.filter((p) => p.status === "uncategorized").length;
+    const pendingCount = photos.filter((p) => p.status === "pending").length; // Add pending count if needed for summary
 
     // Remove old mock photo generation logic, state is initialized from JSON
 
@@ -231,7 +236,7 @@ const AllPhotosPage: React.FC = () => {
                                         )}
                                         {/* Optionally, add a badge for uncategorized/pending/processing */}
                                         {!photo.category && (
-                                             <Badge
+                                            <Badge
                                                 color={getStatusColor(photo.status)}
                                                 variant="light"
                                                 radius="xl"
@@ -239,7 +244,8 @@ const AllPhotosPage: React.FC = () => {
                                                 top={8}
                                                 left={8}
                                             >
-                                                {photo.status.charAt(0).toUpperCase() + photo.status.slice(1)} {/* Capitalize status */}
+                                                {photo.status.charAt(0).toUpperCase() + photo.status.slice(1)}{" "}
+                                                {/* Capitalize status */}
                                             </Badge>
                                         )}
                                     </Box>
@@ -293,8 +299,7 @@ const AllPhotosPage: React.FC = () => {
                             </Text>
                             {/* TODO: Replace with actual path */}
                             <Text size="sm">
-                                /
-                                {/* Update path display logic */}
+                                /{/* Update path display logic */}
                                 {selectedPhoto.category
                                     ? selectedPhoto.category.name.toLowerCase()
                                     : selectedPhoto.status}
@@ -305,14 +310,18 @@ const AllPhotosPage: React.FC = () => {
                                 Category:
                             </Text>
                             <Text size="sm">
-                                {selectedPhoto.category ? selectedPhoto.category.name : selectedPhoto.status.charAt(0).toUpperCase() + selectedPhoto.status.slice(1)}
+                                {selectedPhoto.category
+                                    ? selectedPhoto.category.name
+                                    : selectedPhoto.status.charAt(0).toUpperCase() + selectedPhoto.status.slice(1)}
                             </Text>
 
                             <Text fw={500} size="sm">
                                 Processed:
                             </Text>
                             {/* Display timestamp */}
-                            <Text size="sm">{selectedPhoto.timestamp ? new Date(selectedPhoto.timestamp).toLocaleString() : "N/A"}</Text>
+                            <Text size="sm">
+                                {selectedPhoto.timestamp ? new Date(selectedPhoto.timestamp).toLocaleString() : "N/A"}
+                            </Text>
                         </SimpleGrid>
                     </Stack>
                 )}

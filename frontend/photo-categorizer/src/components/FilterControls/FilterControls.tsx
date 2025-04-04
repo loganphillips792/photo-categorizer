@@ -1,4 +1,4 @@
-import { SegmentedControl, Select, Stack, Title, Divider, Card } from "@mantine/core";
+import { Card, Divider, SegmentedControl, Select, Stack, Title } from "@mantine/core";
 import React from "react";
 import { Category, PhotoStatus } from "../../types"; // Import new types
 
@@ -25,7 +25,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
         { label: "All", value: "all" },
         { label: "Categorized", value: "categorized" },
         { label: "Processing", value: "processing" }, // Changed value
-        { label: "Pending", value: "pending" },       // Added pending
+        { label: "Pending", value: "pending" }, // Added pending
         { label: "Uncategorized", value: "uncategorized" },
     ];
 
@@ -38,25 +38,27 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     ];
 
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder> {/* Added Card wrapper */}
+        <Card shadow="sm" padding="lg" radius="md" withBorder>
+            {" "}
+            {/* Added Card wrapper */}
             <Stack gap="md">
-            <Title order={3}>Filters</Title> {/* Added main title */}
-            <Divider my="sm" /> {/* Added separator */}
-            {/* Removed Filter by Status title */}
-            <SegmentedControl
-                data={statusFilterData}
-                value={currentStatusFilter}
-                onChange={(value) => onStatusFilterChange(value as PhotoStatus | "all")} // Cast to the correct type
-                fullWidth // Optional: make it take full width
-            />
-            {/* Removed Filter by Category title */}
-            <Select
-                data={categoryFilterData}
-                value={currentCategoryFilter}
-                onChange={(value) => onCategoryFilterChange(value || "all")} // Mantine passes value, handle null case
-                placeholder="Select category"
-                allowDeselect={false} // Prevent deselecting to null if 'all' is the default
-            />
+                <Title order={3}>Filters</Title> {/* Added main title */}
+                <Divider my="sm" /> {/* Added separator */}
+                {/* Removed Filter by Status title */}
+                <SegmentedControl
+                    data={statusFilterData}
+                    value={currentStatusFilter}
+                    onChange={(value) => onStatusFilterChange(value as PhotoStatus | "all")} // Cast to the correct type
+                    fullWidth // Optional: make it take full width
+                />
+                {/* Removed Filter by Category title */}
+                <Select
+                    data={categoryFilterData}
+                    value={currentCategoryFilter}
+                    onChange={(value) => onCategoryFilterChange(value || "all")} // Mantine passes value, handle null case
+                    placeholder="Select category"
+                    allowDeselect={false} // Prevent deselecting to null if 'all' is the default
+                />
             </Stack>
         </Card>
     );

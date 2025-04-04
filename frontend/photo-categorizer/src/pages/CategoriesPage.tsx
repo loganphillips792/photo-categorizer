@@ -1,21 +1,21 @@
 import {
-    Container,
-    Title,
-    Text,
-    Stack,
-    Card,
-    Group,
-    Badge,
     ActionIcon,
+    Badge,
     Button,
+    Card,
+    Container,
     Divider,
+    Group,
+    Stack,
+    Text,
     TextInput, // Added for editing
-    Textarea,  // Added for editing
+    Textarea,
+    Title,
 } from "@mantine/core";
-import { IconPencil, IconTrash, IconPlus, IconCheck, IconX } from "@tabler/icons-react"; // Added save/cancel icons
+import { IconCheck, IconPencil, IconPlus, IconTrash, IconX } from "@tabler/icons-react"; // Added save/cancel icons
 import React, { useMemo, useState } from "react"; // Added useState
-import { Category, Photo } from "../types"; // Import types
 import mockData from "../lib/mock-data.json"; // Import mock data
+import { Category, Photo } from "../types"; // Import types
 
 const CategoriesPage: React.FC = () => {
     // State for categories, editing status, and temporary edit values
@@ -56,12 +56,10 @@ const CategoriesPage: React.FC = () => {
     // Save edited category
     const handleSaveEdit = (categoryId: string) => {
         // TODO: Add API call here to persist changes
-        setCategories(prevCategories =>
-            prevCategories.map(cat =>
-                cat.id === categoryId
-                    ? { ...cat, name: editName, description: editDescription }
-                    : cat
-            )
+        setCategories((prevCategories) =>
+            prevCategories.map((cat) =>
+                cat.id === categoryId ? { ...cat, name: editName, description: editDescription } : cat,
+            ),
         );
         setEditingCategoryId(null); // Exit editing mode
     };
@@ -99,7 +97,7 @@ const CategoriesPage: React.FC = () => {
             description: newCategoryDescription.trim(),
             // color: '#cccccc' // Optional: assign a default color or let user choose
         };
-        setCategories(prevCategories => [...prevCategories, newCategory]);
+        setCategories((prevCategories) => [...prevCategories, newCategory]);
         setIsAddingCategory(false); // Hide form after saving
     };
 
@@ -108,9 +106,7 @@ const CategoriesPage: React.FC = () => {
             <Stack gap="xl">
                 <Stack gap="xs">
                     <Title order={1}>Categories</Title>
-                    <Text c="dimmed">
-                        Define categories to help the AI classify your photos
-                    </Text>
+                    <Text c="dimmed">Define categories to help the AI classify your photos</Text>
                 </Stack>
 
                 <Stack gap="md">
@@ -159,7 +155,9 @@ const CategoriesPage: React.FC = () => {
                                         <Group justify="space-between">
                                             <Group gap="sm" align="center">
                                                 <Title order={3}>{category.name}</Title>
-                                                <Badge variant="light" radius="sm" mt={4}> {/* Adjust badge alignment */}
+                                                <Badge variant="light" radius="sm" mt={4}>
+                                                    {" "}
+                                                    {/* Adjust badge alignment */}
                                                     {photoCounts[category.id] || 0} photos
                                                 </Badge>
                                             </Group>
@@ -191,7 +189,8 @@ const CategoriesPage: React.FC = () => {
                                 )}
                             </Card>
                         );
-                    })} {/* This is the correct closing brace and parenthesis for the map function */}
+                    })}{" "}
+                    {/* This is the correct closing brace and parenthesis for the map function */}
                 </Stack>
 
                 {/* Conditionally render the Add New Category form */}
