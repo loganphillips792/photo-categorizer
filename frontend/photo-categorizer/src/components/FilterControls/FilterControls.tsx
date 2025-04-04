@@ -1,4 +1,4 @@
-import { SegmentedControl, Select, Stack, Title } from "@mantine/core";
+import { SegmentedControl, Select, Stack, Title, Divider, Card } from "@mantine/core"; // Added Card
 import React from "react";
 
 // Define the possible filter types (remains the same)
@@ -36,17 +36,18 @@ const FilterControls: React.FC<FilterControlsProps> = ({
     ];
 
     return (
-        <Stack gap="md">
-            {" "}
-            {/* Use Stack for vertical layout */}
-            <Title order={4}>Filter by Status:</Title>
+        <Card shadow="sm" padding="lg" radius="md" withBorder> {/* Added Card wrapper */}
+            <Stack gap="md">
+            <Title order={3}>Filters</Title> {/* Added main title */}
+            <Divider my="sm" /> {/* Added separator */}
+            {/* Removed Filter by Status title */}
             <SegmentedControl
                 data={statusFilterData}
                 value={currentStatusFilter}
                 onChange={(value) => onStatusFilterChange(value as StatusFilter)} // Mantine passes the value directly
                 fullWidth // Optional: make it take full width
             />
-            <Title order={4}>Filter by Category:</Title>
+            {/* Removed Filter by Category title */}
             <Select
                 data={categoryFilterData}
                 value={currentCategoryFilter}
@@ -54,7 +55,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
                 placeholder="Select category"
                 allowDeselect={false} // Prevent deselecting to null if 'all' is the default
             />
-        </Stack>
+            </Stack>
+        </Card>
     );
 };
 
