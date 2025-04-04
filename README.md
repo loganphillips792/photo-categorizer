@@ -51,6 +51,8 @@ docker run -d -p 5001:5000 --env-file .env --name backend-container-2 flask-app
 
 # API Commands
 
+## User
+
 ```
 curl -X POST \
   -H "Content-Type: application/json" \
@@ -60,4 +62,29 @@ curl -X POST \
 
 ```
 curl http://127.0.0.1:5000/users
+```
+
+
+## Categories
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Electronics", "description": "Devices and gadgets"}' \
+  http://127.0.0.1:5000/categories
+```
+
+```bash
+curl http://127.0.0.1:5000/categories/1
+```
+
+```bash
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Updated Electronics", "description": "Updated description for electronics"}' \
+  http://127.0.0.1:5000/categories/1
+```
+
+```bash
+curl -X DELETE http://127.0.0.1:5000/categories/1
 ```
