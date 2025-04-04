@@ -1,0 +1,106 @@
+{
+  "categories": [
+    {
+      "id": "music",
+      "name": "Music",
+      "description": "Photos related to music, instruments, or concerts",
+      "color": "#9b87f5"
+    },
+    {
+      "id": "health",
+      "name": "Health",
+      "description": "Photos related to health, fitness, or medical topics",
+      "color": "#4ade80"
+    },
+    {
+      "id": "flexibility",
+      "name": "Flexibility/Posture",
+      "description": "Photos showing flexibility exercises or posture improvements",
+      "color": "#60a5fa"
+    },
+    {
+      "id": "machine-learning",
+      "name": "Machine Learning",
+      "description": "Photos related to AI, machine learning, or data science",
+      "color": "#f97316"
+    },
+    {
+      "id": "cooking",
+      "name": "Cooking",
+      "description": "Photos of food, cooking, or recipes",
+      "color": "#ec4899"
+    },
+    {
+      "id": "spanish",
+      "name": "Spanish",
+      "description": "Photos related to Spanish language or culture",
+      "color": "#facc15"
+    }
+  ],
+  "photos": [
+    {
+      "id": "1",
+      "name": "guitar-practice.jpg",
+      "src": "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "categorized",
+      "category": {
+        "id": "music",
+        "name": "Music",
+        "description": "Photos related to music, instruments, or concerts",
+        "color": "#9b87f5"
+      },
+      "timestamp": "2023-08-15T14:30:00Z",
+      "confidenceScore": 0.92
+    },
+    {
+      "id": "2",
+      "name": "workout-plan.jpg",
+      "src": "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "categorized",
+      "category": {
+        "id": "health",
+        "name": "Health",
+        "description": "Photos related to health, fitness, or medical topics",
+        "color": "#4ade80"
+      },
+      "timestamp": "2023-08-16T09:45:00Z",
+      "confidenceScore": 0.88
+    },
+    {
+      "id": "3",
+      "name": "coding-session.jpg",
+      "src": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "categorized",
+      "category": {
+        "id": "machine-learning",
+        "name": "Machine Learning",
+        "description": "Photos related to AI, machine learning, or data science",
+        "color": "#f97316"
+      },
+      "timestamp": "2023-08-16T16:20:00Z",
+      "confidenceScore": 0.95
+    },
+    {
+      "id": "4",
+      "name": "dinner-recipe.jpg",
+      "src": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "processing",
+      "timestamp": "2023-08-17T10:15:00Z"
+    },
+    {
+      "id": "5",
+      "name": "laptop-setup.jpg",
+      "src": "https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "pending",
+      "timestamp": "2023-08-17T11:30:00Z"
+    },
+    {
+      "id": "6",
+      "name": "code-review.jpg",
+      "src": "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      "status": "uncategorized",
+      "timestamp": "2023-08-17T13:45:00Z",
+      "confidenceScore": 0.42
+    }
+  ]
+}
