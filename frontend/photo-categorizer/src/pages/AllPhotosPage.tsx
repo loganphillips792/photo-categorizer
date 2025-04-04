@@ -128,6 +128,12 @@ const AllPhotosPage: React.FC = () => {
         openModal();
     };
 
+    // Calculate counts for the summary
+    const totalPhotos = photos.length;
+    const categorizedCount = photos.filter(p => p.status === 'categorized').length;
+    const processingCount = photos.filter(p => p.status === 'processing').length;
+    const uncategorizedCount = photos.filter(p => p.status === 'uncategorized').length;
+
     return (
         <Container size="xl">
             {" "}
@@ -136,6 +142,49 @@ const AllPhotosPage: React.FC = () => {
                 {" "}
                 {/* Stack for vertical spacing */}
                 <Title order={1}>All Photos</Title>
+                {/* Summary Section */}
+                <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="lg" mb="lg">
+                    <Card shadow="sm" padding="lg" radius="md" withBorder>
+                        <Stack align="center" gap={0}>
+                            <Text fz={32} fw={700} c="dark.6">
+                                {totalPhotos}
+                            </Text>
+                            <Text size="sm" c="dimmed">
+                                Total Photos
+                            </Text>
+                        </Stack>
+                    </Card>
+                    <Card shadow="sm" padding="lg" radius="md" withBorder>
+                        <Stack align="center" gap={0}>
+                            <Text fz={32} fw={700} c="green.6">
+                                {categorizedCount}
+                            </Text>
+                            <Text size="sm" c="dimmed">
+                                Categorized
+                            </Text>
+                        </Stack>
+                    </Card>
+                    <Card shadow="sm" padding="lg" radius="md" withBorder>
+                        <Stack align="center" gap={0}>
+                            <Text fz={32} fw={700} c="orange.6">
+                                {processingCount}
+                            </Text>
+                            <Text size="sm" c="dimmed">
+                                Processing
+                            </Text>
+                        </Stack>
+                    </Card>
+                    <Card shadow="sm" padding="lg" radius="md" withBorder>
+                        <Stack align="center" gap={0}>
+                            <Text fz={32} fw={700} c="red.6">
+                                {uncategorizedCount}
+                            </Text>
+                            <Text size="sm" c="dimmed">
+                                Uncategorized
+                            </Text>
+                        </Stack>
+                    </Card>
+                </SimpleGrid>
                 {/* Display upload status */}
                 {uploadStatus && <Text c="dimmed">{uploadStatus}</Text>}
                 {/* Filter Controls (already refactored) */}
