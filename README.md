@@ -48,3 +48,16 @@ docker run -d -p 5001:5000 --env-file .env --name backend-container-2 flask-app
 - /login
 - /admin (protected route)
 - not found
+
+# API Commands
+
+```
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "email": "test@example.com", "password": "password123"}' \
+  http://127.0.0.1:5000/add_user
+```
+
+```
+curl http://127.0.0.1:5000/users
+```
