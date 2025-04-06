@@ -10,3 +10,4 @@ flask_sqlalchemy
 pytz
 gunicorn
 flask-login
+flask-jwt-extended

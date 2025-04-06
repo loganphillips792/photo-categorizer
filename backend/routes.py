@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, jsonify, request
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 
 # Import db instance and User model
 from app import db
@@ -52,9 +53,44 @@ def get_users():
         current_app.logger.error(f'Error retrieving users: {e}')
         return jsonify({'error': str(e)}), 500
 
+# --- Authentication Routes ---
+
+@main_bp.route('/login', methods=['POST'])
+def login():
+    """Authenticates a user and returns JWT tokens."""
+    data = request.get_json()
+    if not data or not 'username' in data or not 'password' in data:
+        return jsonify({'error': 'Missing username or password'}), 400
+
+    username = data['username']
+    password = data['password']
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and user.check_password(password):
+        # Identity must be JSON serializable (string is recommended)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
+        current_app.logger.info(f'User {username} logged in successfully. Access token is #{access_token}')
+        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+    else:
+        current_app.logger.warning(f'Failed login attempt for username: {username}')
+        return jsonify({'error': 'Invalid credentials'}), 401
+
+@main_bp.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh():
+    """Refreshes an access token."""
+    current_user_id = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user_id)
+    current_app.logger.info(f'Refreshed token for user ID: {current_user_id}')
+    return jsonify(access_token=new_access_token), 200
+
+# --- Protected Routes ---
 
 # Category Routes
 @main_bp.route('/categories', methods=['GET'])
+@jwt_required()
 def get_categories():
     """Returns a list of all categories."""
     try:
@@ -67,6 +103,7 @@ def get_categories():
         return jsonify({'error': str(e)}), 500
 
 @main_bp.route('/categories', methods=['POST'])
+@jwt_required()
 def add_category():
     """Adds a new category to the database."""
     data = request.get_json()
@@ -93,6 +130,7 @@ def add_category():
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
 
 @main_bp.route('/categories/<int:category_id>', methods=['GET'])
+@jwt_required()
 def get_category(category_id):
     """Returns a specific category by ID."""
     try:
@@ -104,6 +142,7 @@ def get_category(category_id):
         return jsonify({'error': str(e)}), 500
 
 @main_bp.route('/categories/<int:category_id>', methods=['PUT'])
+@jwt_required()
 def update_category(category_id):
     """Updates a specific category by ID."""
     category = Category.query.get_or_404(category_id)
@@ -131,6 +170,7 @@ def update_category(category_id):
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
 
 @main_bp.route('/categories/<int:category_id>', methods=['DELETE'])
+@jwt_required()
 def delete_category(category_id):
     """Deletes a specific category by ID."""
     category = Category.query.get_or_404(category_id)

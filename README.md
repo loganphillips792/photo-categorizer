@@ -53,14 +53,14 @@ docker run -d -p 5001:5000 --env-file .env --name backend-container-2 flask-app
 
 ## User
 
-```
+```bash
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"username": "testuser", "email": "test@example.com", "password": "password123"}' \
   http://127.0.0.1:5000/add_user
 ```
 
-```
+```bash
 curl http://127.0.0.1:5000/users
 ```
 
@@ -87,4 +87,18 @@ curl -X PUT \
 
 ```bash
 curl -X DELETE http://127.0.0.1:5000/categories/1
+```
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "password": "password123"}' \
+  http://127.0.0.1:5000/login
+```
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_REFRESH_TOKEN" \
+  http://127.0.0.1:5000/refresh
 ```

@@ -6,7 +6,7 @@ from logging.config import dictConfig
 from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_jwt_extended import JWTManager
 # Load environment variables from .env file
 load_dotenv()
 dictConfig({
@@ -32,8 +32,14 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///mydatabase.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Disable modification tracking
 
+# Configure JWT
+# It's recommended to use a strong, random secret key stored in environment variables
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret') # Change this in production!
+
 # Initialize SQLAlchemy AFTER app configuration
 db = SQLAlchemy(app)
+# Initialize JWTManager AFTER app configuration
+jwt = JWTManager(app)
 
 # Import blueprints AFTER db is initialized to avoid circular imports
 from routes import main_bp
