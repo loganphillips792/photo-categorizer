@@ -38,6 +38,15 @@ const BurgerMenu: React.FC = () => {
                         </NavLink>
                     </li>
                     {/* Add more navigation links as needed */}
+                    <li>
+                        <NavLink
+                            to="/login"
+                            className={({ isActive }) => (isActive ? styles.activeLink : "")}
+                            onClick={toggleMenu} // Close menu on link click
+                        >
+                            Login
+                        </NavLink>
+                    </li>
                 </ul>
             </nav>
             {/* Optional: Overlay to close menu when clicking outside */}

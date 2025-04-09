@@ -1,6 +1,6 @@
 import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton } from "@mantine/core"; // Added ActionIcon, Box
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"; // Added icons
+import { IconChevronLeft, IconChevronRight, IconLogin } from "@tabler/icons-react"; // Added icons, IconLogin
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
 // Removed BurgerMenu import
@@ -16,6 +16,7 @@ const Layout: React.FC = () => {
         { label: "All Photos", path: "/all" }, // Correct path for AllPhotosPage
         { label: "Categories", path: "/categories" }, // Added Categories link
         { label: "Settings", path: "/settings" },
+        // Removed Login link from main navLinks
     ];
 
     return (
@@ -49,6 +50,27 @@ const Layout: React.FC = () => {
                             }}
                         />
                     ))}
+                </AppShell.Section>
+
+                {/* Section for bottom controls like Login */}
+                <AppShell.Section>
+                    <NavLink
+                        label="Login"
+                        leftSection={<IconLogin size="1rem" stroke={1.5} />}
+                        onClick={() => {
+                            navigate("/login");
+                            if (mobileOpened) toggleMobile(); // Close mobile nav if open
+                        }}
+                        style={{ marginTop: 'auto' }} // Push to bottom if needed, though separate section helps
+                    />
+                     {/* Alternative: ActionIcon centered */}
+                     {/*
+                     <Group justify="center" mt="md">
+                         <ActionIcon variant="default" size="lg" onClick={() => navigate('/login')}>
+                             <IconLogin size="1.1rem" stroke={1.5} />
+                         </ActionIcon>
+                     </Group>
+                     */}
                 </AppShell.Section>
             </AppShell.Navbar>
 
