@@ -1,6 +1,9 @@
 from functools import wraps
-from flask import Blueprint, current_app, jsonify, request
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
+from flask import Blueprint, current_app, jsonify, request, make_response
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt,
+    set_access_cookies, set_refresh_cookies, unset_jwt_cookies
+)
 
 # Import db instance and User model
 from app import db
@@ -94,8 +97,13 @@ def login():
         additional_claims = {"role": user.role}
         access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(user.id))
-        current_app.logger.info(f'User {username} logged in successfully. Access token is #{access_token}')
-        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+        current_app.logger.info(f'User {username} logged in successfully.')
+        # Create response object
+        response = make_response(jsonify({"msg": "Login successful", "user": {"id": user.id, "username": user.username, "role": user.role}}), 200)
+        # Set cookies
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        return response
     else:
         current_app.logger.warning(f'Failed login attempt for username: {username}')
         return jsonify({'error': 'Invalid credentials'}), 401
@@ -107,7 +115,9 @@ def refresh():
     current_user_id = get_jwt_identity()
     new_access_token = create_access_token(identity=current_user_id)
     current_app.logger.info(f'Refreshed token for user ID: {current_user_id}')
-    return jsonify(access_token=new_access_token), 200
+    response = make_response(jsonify({"msg": "Token refreshed"}), 200)
+    set_access_cookies(response, new_access_token)
+    return response
 
 # --- Protected Routes ---
 

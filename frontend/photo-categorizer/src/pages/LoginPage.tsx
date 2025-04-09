@@ -41,6 +41,8 @@ const LoginPage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                // Send cookies along with the request (important for CSRF and session handling)
+                // credentials: 'include',
                 // Flask backend expects 'username', let's send email as username for now
                 // Adjust if backend expects 'email' specifically
                 body: JSON.stringify({ username: email, password: password }),
@@ -52,10 +54,9 @@ const LoginPage: React.FC = () => {
                 throw new Error(data.error || `Login failed with status: ${response.status}`);
             }
 
-            console.log('Login successful:', data);
-            // TODO: Store the received token (e.g., in localStorage or context)
-            // Example: localStorage.setItem('accessToken', data.access_token);
-            // Example: localStorage.setItem('refreshToken', data.refresh_token);
+            // Login successful! Tokens are now handled by HttpOnly cookies.
+            // The response body might contain user info if needed.
+            console.log('Login successful, response data:', data);
 
             // Redirect to a protected page or home page after successful login
             navigate('/'); // Redirect to home page for now
