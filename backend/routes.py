@@ -206,3 +206,44 @@ def delete_category(category_id):
         db.session.rollback()
         current_app.logger.error(f'Error deleting category {category_id}: {e}')
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+
+
+# --- File Upload Route ---
+
+@main_bp.route('/upload', methods=['POST'])
+@jwt_required() # Optional: Uncomment if upload should require authentication
+def upload_photos():
+    current_app.logger.info("upload_photos()")
+    """Handles file uploads, expects files under the 'files' key."""
+    if 'files' not in request.files:
+        current_app.logger.warning("Upload attempt with no 'files' key in request.files")
+        return jsonify({'error': "No 'files' key found in the request"}), 400
+
+    files = request.files.getlist('files') # Get list of files under the 'files' key
+
+    if not files or all(f.filename == '' for f in files):
+        current_app.logger.warning("Upload attempt with no selected files")
+        return jsonify({'error': 'No selected files'}), 400
+
+    processed_files = []
+    try:
+        current_app.logger.info(f"Received {len(files)} file(s) for upload.")
+        for file in files:
+            if file and file.filename: # Check if file exists and has a filename
+                # --- Process the file ---
+                # For now, just log the filename
+                current_app.logger.info(f"Processing file: {file.filename}")
+                processed_files.append(file.filename)
+
+                # TODO: Add logic here to save the file, categorize it, etc.
+                # Example: file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], file.filename))
+
+        current_app.logger.info(f"Successfully processed {len(processed_files)} file(s).")
+        return jsonify({
+            'message': f'Successfully processed {len(processed_files)} file(s).',
+            'processed_filenames': processed_files
+        }), 200
+
+    except Exception as e:
+        current_app.logger.error(f'Error during file upload processing: {e}')
+        return jsonify({'error': f'Internal server error during upload: {str(e)}'}), 500

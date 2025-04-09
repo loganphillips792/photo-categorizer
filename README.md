@@ -91,6 +91,15 @@ curl -X PUT \
 curl -X DELETE http://127.0.0.1:5000/categories/1
 ```
 
+## File
+
+```bash
+curl -X POST http://127.0.0.1:5000/upload \
+  -H "Authorization: Bearer ACCESS_TOKEN" \
+  -F "files=@/Users/logan/Downloads/penguin_midjourney.jpg" \
+  -F "files=@/Users/logan/Downloads/penguin_midjourney.jpg"
+```
+
 ## Login
 
 ```bash

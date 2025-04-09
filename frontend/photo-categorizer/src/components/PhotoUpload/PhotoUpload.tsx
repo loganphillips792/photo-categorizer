@@ -34,7 +34,7 @@ const PhotoUpload: React.FC = () => { // Removed props
         });
 
         try {
-            const response = await fetch("http://localhost:5000/upload", {
+            const response = await fetch("http://127.0.0.1:5000/upload", {
                 method: "POST",
                 body: formData,
                 // Headers might be needed depending on your backend (e.g., Authorization)
