@@ -1,5 +1,6 @@
+from functools import wraps
 from flask import Blueprint, current_app, jsonify, request
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
 
 # Import db instance and User model
 from app import db
@@ -41,12 +42,32 @@ def add_user():
         current_app.logger.error(f'Error adding user {username}: {e}')
         return jsonify({'error': f'Internal server error: {str(e)}'}), 500
 
+# --- Custom Decorators ---
+
+def admin_required():
+    """Decorator to ensure the user has the 'admin' role."""
+    def wrapper(fn):
+        @wraps(fn)
+        @jwt_required() # Ensures a valid JWT is present first
+        def decorator(*args, **kwargs):
+            claims = get_jwt()
+            if claims.get("role") == "admin":
+                return fn(*args, **kwargs)
+            else:
+                return jsonify(msg="Admins only!"), 403
+        return decorator
+    return wrapper
+
+# --- User Routes ---
+
 @main_bp.route('/users')
+@admin_required() # Apply the custom decorator
 def get_users():
     """Returns a list of all users."""
     try:
         users = User.query.all()
-        user_list = [{'id': user.id, 'username': user.username, 'email': user.email} for user in users]
+        # Include role in the returned user list
+        user_list = [{'id': user.id, 'username': user.username, 'email': user.email, 'role': user.role} for user in users]
         current_app.logger.info('Retrieved user list')
         return jsonify(user_list), 200
     except Exception as e:
@@ -69,7 +90,9 @@ def login():
 
     if user and user.check_password(password):
         # Identity must be JSON serializable (string is recommended)
-        access_token = create_access_token(identity=str(user.id))
+        # Add role to additional claims
+        additional_claims = {"role": user.role}
+        access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=str(user.id))
         current_app.logger.info(f'User {username} logged in successfully. Access token is #{access_token}')
         return jsonify(access_token=access_token, refresh_token=refresh_token), 200

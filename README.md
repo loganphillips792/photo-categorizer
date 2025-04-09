@@ -61,7 +61,7 @@ curl -X POST \
 ```
 
 ```bash
-curl http://127.0.0.1:5000/users
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" http://127.0.0.1:5000/users
 ```
 
 
@@ -70,12 +70,13 @@ curl http://127.0.0.1:5000/users
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -d '{"name": "Electronics", "description": "Devices and gadgets"}' \
   http://127.0.0.1:5000/categories
 ```
 
 ```bash
-curl http://127.0.0.1:5000/categories/1
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" http://127.0.0.1:5000/categories
 ```
 
 ```bash
