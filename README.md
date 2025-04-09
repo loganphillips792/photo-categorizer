@@ -61,7 +61,7 @@ curl -X POST \
 ```
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" http://127.0.0.1:5000/users
+curl -H "Authorization: Bearer ACCESS_TOKEN" http://127.0.0.1:5000/users
 ```
 
 
@@ -70,18 +70,19 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" http://127.0.0.1:5000/users
 ```bash
 curl -X POST \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer ACCESS_TOKEN" \
   -d '{"name": "Electronics", "description": "Devices and gadgets"}' \
   http://127.0.0.1:5000/categories
 ```
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" http://127.0.0.1:5000/categories
+curl -H "Authorization: Bearer ACCESS_TOKEN" http://127.0.0.1:5000/categories
 ```
 
 ```bash
 curl -X PUT \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ACCESS_TOKEN" \
   -d '{"name": "Updated Electronics", "description": "Updated description for electronics"}' \
   http://127.0.0.1:5000/categories/1
 ```
@@ -89,6 +90,8 @@ curl -X PUT \
 ```bash
 curl -X DELETE http://127.0.0.1:5000/categories/1
 ```
+
+## Login
 
 ```bash
 curl -X POST \
