@@ -12,21 +12,24 @@ const PhotoUpload: React.FC = () => { // Removed props
     const openRef = useRef<() => void>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [stagedFiles, setStagedFiles] = useState<File[]>([]); // State for staged files
     // Removed inputRef, handleFileChange, triggerInputClick
 
     // Removed complex getFilesFromEntry helper function
     // --- Function to upload files to the API ---
-    const uploadFiles = useCallback(async (files: File[]) => {
-        if (files.length === 0) {
-            console.log("No image files found to upload.");
+    const uploadFiles = useCallback(async () => { // No longer takes files argument
+        // Use stagedFiles from state
+        if (stagedFiles.length === 0) {
+            console.log("No staged files to upload.");
+            setError("No files selected for upload."); // Inform user
             return;
         }
         setIsLoading(true);
         setError(null);
-        console.log(`Uploading ${files.length} files...`);
+        console.log(`Uploading ${stagedFiles.length} files...`);
 
         const formData = new FormData();
-        files.forEach((file, index) => {
+        stagedFiles.forEach((file) => { // Iterate over stagedFiles
             formData.append(`files`, file, file.name); // Use 'files' as the key
         });
 
@@ -45,36 +48,45 @@ const PhotoUpload: React.FC = () => { // Removed props
 
             const result = await response.json();
             console.log("Upload successful:", result);
-            // Optionally: Show success message or clear dropzone
+            // Optionally: Show success message
+            setStagedFiles([]); // Clear staged files on success
         } catch (err) {
             console.error("Upload error:", err);
             setError(err instanceof Error ? err.message : "An unknown error occurred during upload.");
         } finally {
             setIsLoading(false);
+            // Clear staged files even on error? Maybe not, allow retry.
+            // Consider adding a "Clear Selection" button if needed.
+             // Let's clear on error too for simplicity now.
+             setStagedFiles([]);
         }
-    }, []);
+    }, [stagedFiles]); // Add stagedFiles dependency
 
 
     // --- Simplified onDrop handler ---
     // Mantine's Dropzone provides a flat list of files,
     // including those from a selected directory when using webkitdirectory.
-    const handleDrop = useCallback(async (acceptedFiles: File[]) => {
+    const handleDrop = useCallback((acceptedFiles: File[]) => { // No longer async, just sets state
         console.log("Files accepted by Dropzone:", acceptedFiles);
+        setError(null); // Clear previous errors
+        setStagedFiles([]); // Clear previous selection
+
         if (acceptedFiles.length > 0) {
-             // Filter again here just to be safe, although `accept` prop should handle it
+            // Filter for valid image types
             const imageFiles = acceptedFiles.filter(file => IMAGE_MIME_TYPE.includes(file.type as any));
-             if (imageFiles.length > 0) {
-                await uploadFiles(imageFiles);
+            if (imageFiles.length > 0) {
+                console.log(`Staging ${imageFiles.length} image files.`);
+                setStagedFiles(imageFiles); // Set the state with valid files
             } else {
                 console.log("No valid image files found among accepted files.");
                 setError("No valid image files found. Please select images or a folder containing images.");
             }
         } else {
-             console.log("No files were accepted by Dropzone.");
-             // Error might be set by onReject, but we can set a generic one too
-             setError("No files were accepted. Check file types and size limits.");
+            console.log("No files were accepted by Dropzone (likely rejected).");
+            // Don't set an error here, onReject might provide a more specific one
+            // setError("No files were accepted. Check file types and size limits.");
         }
-    }, [uploadFiles]); // Removed getFilesFromEntry dependency
+    }, []); // No dependency on uploadFiles anymore
     return (
         <Stack align="center" gap="md" style={{ position: 'relative' }}> {/* Added relative positioning for Overlay */}
             <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
@@ -85,7 +97,11 @@ const PhotoUpload: React.FC = () => { // Removed props
             )}
         <Dropzone
             onDrop={handleDrop} // Use the new handler
-            onReject={(files) => console.log("rejected files", files)}
+            onReject={(rejectedFiles) => {
+                console.log("Rejected files:", rejectedFiles);
+                setError(`File rejected: ${rejectedFiles.map(f => f.errors.map(e => e.message).join(', ')).join('; ')}`);
+                setStagedFiles([]); // Clear stage on rejection
+            }}
             maxSize={5 * 1024 ** 2} // 5MB limit per file
             accept={IMAGE_MIME_TYPE} // Accept common image types
             openRef={openRef} // Assign the ref
@@ -127,10 +143,26 @@ const PhotoUpload: React.FC = () => { // Removed props
                 </div>
             </Group>
         </Dropzone>
-            {/* Add Button below Dropzone */}
-            <Button onClick={() => openRef.current?.()}>
-                Or Select Files
-            </Button>
+            {/* Display staged file count */}
+            {stagedFiles.length > 0 && !isLoading && (
+                <Text c="dimmed" size="sm" mt="xs">
+                    {stagedFiles.length} photo(s) ready for upload.
+                </Text>
+            )}
+
+            {/* Buttons */}
+            <Group justify="center" mt="md">
+                 <Button onClick={() => openRef.current?.()} disabled={isLoading}> {/* Removed variant="default" */}
+                    Select Files/Folder
+                </Button>
+                <Button
+                    onClick={uploadFiles}
+                    disabled={stagedFiles.length === 0 || isLoading}
+                    loading={isLoading}
+                >
+                    Upload Photos
+                </Button>
+            </Group>
         </Stack>
     );
 };
