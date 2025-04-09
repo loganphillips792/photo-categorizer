@@ -1,37 +1,102 @@
-import { Group, Stack, Text, rem, Button, useMantineTheme } from "@mantine/core"; // Import Button and useMantineTheme
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
-import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
-import React, { useRef } from "react"; // Import useRef (Keep this one)
+import { Group, Stack, Text, rem, Button, useMantineTheme, LoadingOverlay, Alert } from "@mantine/core"; // Import LoadingOverlay, Alert
+import { IconUpload, IconPhoto, IconX, IconAlertCircle } from "@tabler/icons-react"; // Import IconAlertCircle
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone"; // Removed FileWithPath as we handle File directly now
+import React, { useRef, useState, useCallback } from "react"; // Import useState, useCallback
 // Removed duplicate React import from line below
 // Removed duplicate React import line
 
-interface PhotoUploadProps {
-    onFilesSelected: (files: FileWithPath[]) => void; // Updated type for Dropzone
-}
+// Removed PhotoUploadProps as the component handles uploads internally now
 
-const PhotoUpload: React.FC<PhotoUploadProps> = ({ onFilesSelected }) => {
-    const theme = useMantineTheme(); // Get theme for colors
-    const openRef = useRef<() => void>(null); // Ref for Dropzone's open function
+const PhotoUpload: React.FC = () => { // Removed props
+    const theme = useMantineTheme();
+    const openRef = useRef<() => void>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     // Removed inputRef, handleFileChange, triggerInputClick
 
+    // Removed complex getFilesFromEntry helper function
+    // --- Function to upload files to the API ---
+    const uploadFiles = useCallback(async (files: File[]) => {
+        if (files.length === 0) {
+            console.log("No image files found to upload.");
+            return;
+        }
+        setIsLoading(true);
+        setError(null);
+        console.log(`Uploading ${files.length} files...`);
+
+        const formData = new FormData();
+        files.forEach((file, index) => {
+            formData.append(`files`, file, file.name); // Use 'files' as the key
+        });
+
+        try {
+            const response = await fetch("http://localhost:5000/upload", {
+                method: "POST",
+                body: formData,
+                // Headers might be needed depending on your backend (e.g., Authorization)
+                // headers: { 'Content-Type': 'multipart/form-data' } // Usually set automatically by fetch for FormData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Upload failed with status: ' + response.status }));
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("Upload successful:", result);
+            // Optionally: Show success message or clear dropzone
+        } catch (err) {
+            console.error("Upload error:", err);
+            setError(err instanceof Error ? err.message : "An unknown error occurred during upload.");
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+
+    // --- Simplified onDrop handler ---
+    // Mantine's Dropzone provides a flat list of files,
+    // including those from a selected directory when using webkitdirectory.
+    const handleDrop = useCallback(async (acceptedFiles: File[]) => {
+        console.log("Files accepted by Dropzone:", acceptedFiles);
+        if (acceptedFiles.length > 0) {
+             // Filter again here just to be safe, although `accept` prop should handle it
+            const imageFiles = acceptedFiles.filter(file => IMAGE_MIME_TYPE.includes(file.type as any));
+             if (imageFiles.length > 0) {
+                await uploadFiles(imageFiles);
+            } else {
+                console.log("No valid image files found among accepted files.");
+                setError("No valid image files found. Please select images or a folder containing images.");
+            }
+        } else {
+             console.log("No files were accepted by Dropzone.");
+             // Error might be set by onReject, but we can set a generic one too
+             setError("No files were accepted. Check file types and size limits.");
+        }
+    }, [uploadFiles]); // Removed getFilesFromEntry dependency
     return (
-        <Stack align="center" gap="md"> {/* Wrap in Stack */}
+        <Stack align="center" gap="md" style={{ position: 'relative' }}> {/* Added relative positioning for Overlay */}
+            <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+            {error && (
+                <Alert icon={<IconAlertCircle size="1rem" />} title="Upload Error" color="red" withCloseButton onClose={() => setError(null)}>
+                    {error}
+                </Alert>
+            )}
         <Dropzone
-            onDrop={(files) => {
-                console.log("Dropped files:", files);
-                onFilesSelected(files);
-            }}
+            onDrop={handleDrop} // Use the new handler
             onReject={(files) => console.log("rejected files", files)}
             maxSize={5 * 1024 ** 2} // 5MB limit per file
             accept={IMAGE_MIME_TYPE} // Accept common image types
             openRef={openRef} // Assign the ref
-            // Removed the custom 'styles' prop to use default Mantine state handling
+            // Enable directory selection when clicking
+            inputProps={{ webkitdirectory: "true", directory: "true" }}
         >
             <Group
                 justify="center"
                 gap="xl"
                 mih={220}
-                style={{ pointerEvents: "none" }} // Keep pointerEvents none for the group
+                // Removed pointerEvents: "none" to allow drag events
             >
                 <Dropzone.Accept>
                     <IconUpload
@@ -66,7 +131,7 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ onFilesSelected }) => {
             <Button onClick={() => openRef.current?.()}>
                 Or Select Files
             </Button>
-        </Stack> // Close Stack
+        </Stack>
     );
 };
 
