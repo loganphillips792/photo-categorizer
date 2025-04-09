@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { FileWithPath } from "@mantine/dropzone"; // Import FileWithPath
 import "./App.css"; // Keep or modify global styles as needed
 import Layout from "./components/Layout/Layout";
 import PhotoUpload from "./components/PhotoUpload/PhotoUpload"; // Import PhotoUpload
@@ -8,7 +9,7 @@ import SettingsPage from "./pages/SettingsPage";
 
 function App() {
     // Placeholder function for file selection
-    const handleFilesSelected = (files: FileList | null) => {
+    const handleFilesSelected = (files: FileWithPath[]) => { // Update type to FileWithPath[]
         if (files) {
             console.log("Files selected:", files);
             // TODO: Implement actual file handling logic (e.g., upload, state update)
