@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS # Import CORS
 # Load environment variables from .env file
 load_dotenv()
 dictConfig({
@@ -26,6 +27,10 @@ dictConfig({
 })
 
 app = Flask(__name__)
+
+# Initialize CORS after creating the app instance
+# Allow all origins for development. Restrict this in production!
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Configure the database URI. Using SQLite for this example.
 # It's recommended to use environment variables for sensitive data.
