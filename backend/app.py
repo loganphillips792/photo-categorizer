@@ -30,7 +30,7 @@ app = Flask(__name__)
 
 # Initialize CORS after creating the app instance
 # Allow all origins for development. Restrict this in production!
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True) # Allow cookies
 
 # Configure the database URI. Using SQLite for this example.
 # It's recommended to use environment variables for sensitive data.

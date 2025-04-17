@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import {
     TextInput,
     PasswordInput,
@@ -13,53 +14,54 @@ import {
 import { IconAlertCircle } from '@tabler/icons-react';
 
 const LoginPage: React.FC = () => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState(''); // Changed from email to username
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const auth = useAuth(); // Get auth context
 
     const handleLogin = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault();
         setIsLoading(true);
         setError(null);
 
         // Basic validation
-        if (!email || !password) {
-            setError('Email and password are required.');
+        if (!username || !password) {
+            setError('Username and password are required.');
             setIsLoading(false);
             return;
         }
 
-        console.log(`Attempting login for email: ${email}`);
+        console.log(`Attempting login for username: ${username}`);
 
         try {
-            // Note: Using 127.0.0.1 instead of 127.0.0.0.1 as it's the standard loopback.
-            // Assuming port 5000 based on previous /upload endpoint.
-            const response = await fetch('http://127.0.0.1:5000/login', {
+            // Use relative path assuming proxy or same-origin deployment
+            const response = await fetch('/api/login', { // Added /api prefix
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Send cookies along with the request (important for CSRF and session handling)
-                // credentials: 'include',
-                // Flask backend expects 'username', let's send email as username for now
-                // Adjust if backend expects 'email' specifically
-                body: JSON.stringify({ username: email, password: password }),
+                credentials: 'include', // Send cookies
+                body: JSON.stringify({ username: username, password: password }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || `Login failed with status: ${response.status}`);
+                // Use error message from backend if available
+                throw new Error(data.error || `Login failed: ${response.statusText}`);
             }
 
-            // Login successful! Tokens are now handled by HttpOnly cookies.
-            // The response body might contain user info if needed.
-            console.log('Login successful, response data:', data);
-
-            // Redirect to a protected page or home page after successful login
-            navigate('/'); // Redirect to home page for now
+            // Login successful! Call auth context login function
+            if (data.user) {
+                auth.login(data.user); // Update auth state
+                console.log('Login successful, user:', data.user);
+                navigate('/'); // Redirect to home page
+            } else {
+                // Handle unexpected success response without user data
+                 throw new Error('Login successful but no user data received.');
+            }
 
         } catch (err) {
             console.error('Login error:', err);
@@ -67,7 +69,7 @@ const LoginPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [email, password, navigate]);
+    }, [username, password, navigate, auth]); // Added auth to dependencies
 
     return (
         <Container size="xs" px="xs">
@@ -83,11 +85,11 @@ const LoginPage: React.FC = () => {
 
                         <TextInput
                             required
-                            label="Email"
-                            placeholder="your@email.com"
-                            value={email}
-                            onChange={(event) => setEmail(event.currentTarget.value)}
-                            error={error && error.includes('Email') ? error : undefined} // Basic error highlighting
+                            label="Username" // Changed label
+                            placeholder="Your username" // Changed placeholder
+                            value={username}
+                            onChange={(event) => setUsername(event.currentTarget.value)}
+                            error={error && error.includes('Username') ? error : undefined}
                         />
 
                         <PasswordInput

@@ -119,6 +119,14 @@ def refresh():
     set_access_cookies(response, new_access_token)
     return response
 
+@main_bp.route('/logout', methods=['POST'])
+def logout():
+    """Logs the user out by unsetting JWT cookies."""
+    response = make_response(jsonify({"msg": "Logout successful"}), 200)
+    unset_jwt_cookies(response)
+    current_app.logger.info("User logged out.")
+    return response
+
 # --- Protected Routes ---
 
 # Category Routes

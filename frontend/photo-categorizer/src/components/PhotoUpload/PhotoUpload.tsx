@@ -34,11 +34,12 @@ const PhotoUpload: React.FC = () => { // Removed props
         });
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/upload", {
+            // Use relative path and include credentials
+            const response = await fetch("/api/upload", { // Added /api prefix
                 method: "POST",
                 body: formData,
-                // Headers might be needed depending on your backend (e.g., Authorization)
-                // headers: { 'Content-Type': 'multipart/form-data' } // Usually set automatically by fetch for FormData
+                credentials: 'include', // Send cookies with the request
+                // No need to set Content-Type for FormData, browser handles it
             });
 
             if (!response.ok) {

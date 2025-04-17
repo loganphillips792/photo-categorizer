@@ -1,15 +1,16 @@
-import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton } from "@mantine/core"; // Added ActionIcon, Box
+import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronLeft, IconChevronRight, IconLogin } from "@tabler/icons-react"; // Added icons, IconLogin
+import { IconChevronLeft, IconChevronRight, IconLogout } from "@tabler/icons-react"; // Changed IconLogin to IconLogout
 import React from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom"; // Import useLocation and useNavigate
-// Removed BurgerMenu import
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // Import useAuth
 
 const Layout: React.FC = () => {
-    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(); // Renamed for clarity
-    const [desktopCollapsed, { toggle: toggleDesktop }] = useDisclosure(false); // State for desktop collapse
+    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+    const [desktopCollapsed, { toggle: toggleDesktop }] = useDisclosure(false);
     const navigate = useNavigate();
-    const location = useLocation(); // Get current location
+    const location = useLocation();
+    const { logout } = useAuth(); // Get logout function from context
 
     // Placeholder navigation links
     const navLinks = [
@@ -54,16 +55,18 @@ const Layout: React.FC = () => {
 
                 {/* Section for bottom controls like Login */}
                 <AppShell.Section>
+                    {/* Logout Button */}
                     <NavLink
-                        label="Login"
-                        leftSection={<IconLogin size="1rem" stroke={1.5} />}
-                        onClick={() => {
-                            navigate("/login");
-                            if (mobileOpened) toggleMobile(); // Close mobile nav if open
+                        label="Logout"
+                        leftSection={<IconLogout size="1rem" stroke={1.5} />}
+                        onClick={async () => {
+                            await logout(); // Call the logout function from context
+                            // No need to navigate here, ProtectedRoute will handle redirect
+                            if (mobileOpened) toggleMobile();
                         }}
-                        style={{ marginTop: 'auto' }} // Push to bottom if needed, though separate section helps
+                        style={{ marginTop: 'auto' }}
                     />
-                     {/* Alternative: ActionIcon centered */}
+                     {/* Login button removed */}
                      {/*
                      <Group justify="center" mt="md">
                          <ActionIcon variant="default" size="lg" onClick={() => navigate('/login')}>
