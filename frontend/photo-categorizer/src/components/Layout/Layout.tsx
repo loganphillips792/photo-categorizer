@@ -2,13 +2,14 @@ import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButto
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight, IconLogin } from "@tabler/icons-react"; // Added icons, IconLogin
 import React from "react";
-import { Outlet, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Outlet, useLocation, useNavigate } from "react-router-dom"; // Import useLocation and useNavigate
 // Removed BurgerMenu import
 
 const Layout: React.FC = () => {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure(); // Renamed for clarity
     const [desktopCollapsed, { toggle: toggleDesktop }] = useDisclosure(false); // State for desktop collapse
     const navigate = useNavigate();
+    const location = useLocation(); // Get current location
 
     // Placeholder navigation links
     const navLinks = [
@@ -42,8 +43,7 @@ const Layout: React.FC = () => {
                             key={link.label}
                             // href={link.path} // Remove href to prevent default link behavior
                             label={link.label}
-                            // Add active state logic if needed, e.g., based on location.pathname
-                            // Example: active={location.pathname === link.path}
+                            active={location.pathname === link.path} // Set active based on current path
                             onClick={() => {
                                 navigate(link.path); // Use navigate for client-side routing
                                 if (mobileOpened) toggleMobile(); // Close navbar on mobile after click
