@@ -133,6 +133,29 @@ def logout():
     current_app.logger.info("User logged out.")
     return response
 
+# --- New Check Auth Route ---
+
+@main_bp.route('/check-auth', methods=['GET']) # Or POST if preferred
+@jwt_required() # Requires a valid access token cookie
+def check_auth():
+    """Checks if the user has a valid session and returns user info."""
+    try:
+        current_user_id = get_jwt_identity() # Get user ID from token
+        user = User.query.get(current_user_id) # Find user by ID
+
+        if user:
+            current_app.logger.info(f"Auth check successful for user: {user.username}")
+            # Return user info, matching the structure expected by frontend
+            return jsonify({"user": {"id": user.id, "username": user.username, "role": user.role}}), 200
+        else:
+            # This case should ideally not happen if JWT is valid and user exists
+            current_app.logger.warning(f"Auth check: User ID {current_user_id} from token not found in DB.")
+            return jsonify({"error": "User not found"}), 404
+
+    except Exception as e:
+        current_app.logger.error(f'Error during auth check: {e}')
+        return jsonify({'error': f'Internal server error during auth check: {str(e)}'}), 500
+
 # --- Protected Routes ---
 
 # Category Routes

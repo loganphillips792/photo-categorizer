@@ -26,27 +26,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const checkAuthStatus = async () => {
         setIsLoading(true);
         try {
-            // Example: Ping a protected backend endpoint that requires a valid JWT cookie
-            // If the request succeeds, the user is authenticated.
-            // We might get user data back from this endpoint too.
-            // For now, let's simulate a check. Replace with actual API call.
-            // const response = await fetch('/api/check-auth', { credentials: 'include' });
-            // if (response.ok) {
-            //     const userData = await response.json();
-            //     setIsAuthenticated(true);
-            //     setUser(userData);
-            // } else {
-            //     setIsAuthenticated(false);
-            //     setUser(null);
-            // }
+            // Ping backend endpoint to check for valid session cookie
+            const response = await fetch('/api/check-auth', { // Assuming this endpoint exists
+                 method: 'GET', // Or POST, depending on backend implementation
+                 credentials: 'include' // Crucial for sending cookies
+            });
 
-            // --- Placeholder ---
-            // Simulate checking - remove this when implementing actual check
-            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-            // Assume not authenticated initially until login
-            setIsAuthenticated(false);
-            setUser(null);
-            // --- End Placeholder ---
+            if (response.ok) {
+                const userData = await response.json();
+                if (userData.user) { // Check if user data exists in response
+                    setIsAuthenticated(true);
+                    setUser(userData.user); // Assuming backend returns { user: { ... } }
+                } else {
+                    // Response OK, but no user data? Treat as not authenticated.
+                    console.warn("Auth check successful but no user data received.");
+                    setIsAuthenticated(false);
+                    setUser(null);
+                }
+            } else {
+                // If response is not ok (e.g., 401), user is not authenticated
+                setIsAuthenticated(false);
+                setUser(null);
+            }
 
         } catch (error) {
             console.error("Auth check failed:", error);
