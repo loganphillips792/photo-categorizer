@@ -1,4 +1,4 @@
-import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, UnstyledButton } from "@mantine/core";
+import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, Text, UnstyledButton } from "@mantine/core"; // Import Text
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight, IconLogout } from "@tabler/icons-react"; // Changed IconLogin to IconLogout
 import React from "react";
@@ -10,7 +10,7 @@ const Layout: React.FC = () => {
     const [desktopCollapsed, { toggle: toggleDesktop }] = useDisclosure(false);
     const navigate = useNavigate();
     const location = useLocation();
-    const { logout } = useAuth(); // Get logout function from context
+    const { user, logout } = useAuth(); // Get user and logout function from context
 
     // Placeholder navigation links
     const navLinks = [
@@ -34,6 +34,11 @@ const Layout: React.FC = () => {
                     <UnstyledButton onClick={() => navigate("/")}>
                         <div>Photo Categorizer</div>
                     </UnstyledButton>
+                    {/* Add Welcome message if user is logged in */}
+                    {user && (
+                        <Text size="sm" ml="auto">Welcome, {user.username}!</Text>
+                    )}
+                    {/* TODO: Consider adding logout button here as well/instead? */}
                 </Group>
             </AppShell.Header>
 
