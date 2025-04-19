@@ -13,6 +13,14 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useAuth } from "../context/AuthContext"; // Import useAuth
 import { IconCheck, IconX } from "@tabler/icons-react";
 
+// Helper function to get a cookie by name
+function getCookie(name: string): string | null {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    return null;
+}
+
 const SettingsPage: React.FC = () => {
     const { user, checkAuthStatus } = useAuth(); // Get user and potentially a function to refresh auth state
     const [newUsername, setNewUsername] = useState("");
@@ -41,10 +49,16 @@ const SettingsPage: React.FC = () => {
 
         console.log(`Attempting to update username to: ${newUsername}`);
         try {
+            const csrfToken = getCookie('csrf_access_token'); // Get CSRF token from cookie
+            if (!csrfToken) {
+                throw new Error("CSRF token not found. Please log in again.");
+            }
+
             const response = await fetch('/api/user/update-username', { // Assuming this endpoint
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken, // Add CSRF token header
                 },
                 credentials: 'include', // Send auth cookie
                 body: JSON.stringify({ new_username: newUsername }),

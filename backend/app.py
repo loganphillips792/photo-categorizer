@@ -41,11 +41,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Disable modification trac
 # It's recommended to use a strong, random secret key stored in environment variables
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret') # Change this in production!
 app.config['JWT_TOKEN_LOCATION'] = ['cookies'] # Store JWTs in cookies
-app.config['JWT_COOKIE_SECURE'] = True # Only send cookies over HTTPS. Set to False if developing over HTTP.
+# Set JWT_COOKIE_SECURE based on FLASK_ENV or similar, default to False for local dev
+is_production = os.environ.get('FLASK_ENV') == 'production'
+# Setting JWT_COOKIE_SECURE to True prevents the browser from sending the authentication cookies (access token and CSRF token) over an insecure HTTP connection. This is why you're still getting the 401 Unauthorized error – the backend isn't receiving the necessary cookies to authenticate the request.To fix this for your local development environment running over HTTP, we need to change this setting to False.Important: This change should only be for development. In a production environment, both your frontend and backend should be served over HTTPS, and JWT_COOKIE_SECURE should be kept as True.
+app.config['JWT_COOKIE_SECURE'] = is_production # False for dev (HTTP), True for prod (HTTPS)
 app.config['JWT_COOKIE_HTTPONLY'] = True # Prevent client-side JS access (default True for cookies)
+app.config['JWT_COOKIE_SAMESITE'] = 'Lax' # Recommended for CSRF protection with cookies
 
-# Setting this to false: https://security.stackexchange.com/questions/170388/do-i-need-csrf-token-if-im-using-bearer-jwt
-app.config['JWT_COOKIE_CSRF_PROTECT'] = False # Enable CSRF protection (default True for cookies)
+# https://security.stackexchange.com/questions/170388/do-i-need-csrf-token-if-im-using-bearer-jwt
+app.config['JWT_COOKIE_CSRF_PROTECT'] = True # Enable CSRF protection (default True for cookies)
 
 # Initialize SQLAlchemy AFTER app configuration
 db = SQLAlchemy(app)
