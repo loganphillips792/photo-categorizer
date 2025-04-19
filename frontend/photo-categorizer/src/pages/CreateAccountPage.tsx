@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
 import {
     TextInput,
     PasswordInput,
@@ -22,6 +23,7 @@ const CreateAccountPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const auth = useAuth(); // Get auth context
 
     const handleCreateAccount = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -44,24 +46,49 @@ const CreateAccountPage: React.FC = () => {
         console.log(`Attempting to create account for username: ${username}, email: ${email}`); // Log email
 
         try {
-            const response = await fetch('/api/add_user', { // Use /api prefix assuming proxy/same-origin
+            // Step 1: Register the user
+            const registerResponse = await fetch('/api/add_user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, email, password }), // Add email to body
+                body: JSON.stringify({ username, email, password }),
             });
 
-            const data = await response.json();
+            const registerData = await registerResponse.json();
 
-            if (!response.ok) {
-                // Use error message from backend if available
-                throw new Error(data.error || `Account creation failed: ${response.statusText}`);
+            if (!registerResponse.ok) {
+                throw new Error(registerData.error || `Account creation failed: ${registerResponse.statusText}`);
+            }
+            console.log('Account created successfully:', registerData);
+
+            // Step 2: Attempt automatic login
+            console.log(`Attempting automatic login for username: ${username}`);
+            const loginResponse = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Send cookies
+                body: JSON.stringify({ username: username, password: password }),
+            });
+
+            const loginData = await loginResponse.json();
+
+            if (!loginResponse.ok) {
+                 // Registration succeeded, but auto-login failed.
+                 throw new Error(loginData.error || `Registration successful, but auto-login failed: ${loginResponse.statusText}. Please log in manually.`);
             }
 
-            console.log('Account created successfully:', data);
-            // Redirect to login page after successful creation
-            navigate('/login');
+            // Step 3: Update auth state and redirect
+            if (loginData.user) {
+                auth.login(loginData.user); // Update auth state
+                console.log('Auto-login successful, user:', loginData.user);
+                navigate('/'); // Redirect to home page
+            } else {
+                // Handle unexpected success response without user data from login
+                throw new Error('Auto-login successful but no user data received.');
+            }
 
         } catch (err) {
             console.error('Account creation error:', err);
@@ -70,7 +97,7 @@ const CreateAccountPage: React.FC = () => {
             setIsLoading(false);
         }
 
-    }, [username, email, password, confirmPassword, navigate]); // Add email to dependencies
+    }, [username, email, password, confirmPassword, navigate, auth]); // Add auth to dependencies
 
     return (
         <Container size="xs" px="xs">
