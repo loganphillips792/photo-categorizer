@@ -156,6 +156,44 @@ def check_auth():
         current_app.logger.error(f'Error during auth check: {e}')
         return jsonify({'error': f'Internal server error during auth check: {str(e)}'}), 500
 
+# --- New Update Username Route ---
+
+@main_bp.route('/user/update-username', methods=['PUT'])
+@jwt_required()
+def update_username():
+    """Updates the username for the currently authenticated user."""
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        # Should not happen if JWT is valid, but good practice to check
+        return jsonify({"error": "User not found"}), 404
+
+    data = request.get_json()
+    if not data or 'new_username' not in data:
+        return jsonify({'error': 'Missing new_username in request body'}), 400
+
+    new_username = data['new_username'].strip() # Remove leading/trailing whitespace
+
+    # Validation
+    if not new_username:
+        return jsonify({'error': 'New username cannot be empty'}), 400
+    if new_username == user.username:
+        return jsonify({'error': 'New username must be different from the current username'}), 400
+    if User.query.filter(User.id != current_user_id, User.username == new_username).first():
+        return jsonify({'error': 'Username already taken'}), 409
+
+    # Update username
+    try:
+        user.username = new_username
+        db.session.commit()
+        current_app.logger.info(f"User ID {current_user_id} updated username to {new_username}")
+        return jsonify({'message': 'Username updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error updating username for user ID {current_user_id}: {e}')
+        return jsonify({'error': f'Internal server error: {str(e)}'}), 500
+
 # --- Protected Routes ---
 
 # Category Routes
