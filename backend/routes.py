@@ -28,7 +28,13 @@ def add_user():
     username = data['username']
     email = data['email']
     password = data['password']
-
+    
+    current_app.logger.info(
+        f"Adding the following user to the database:\n"
+        f"  Username: {username}\n"
+        f"  Email: {email}\n"
+        f"  Password: [REDACTED]" # Redact password for security
+    )
     try:
         # Check if user already exists
         if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():

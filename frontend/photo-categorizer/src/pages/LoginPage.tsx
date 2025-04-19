@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { useAuth } from '../context/AuthContext'; // Import useAuth
 import {
     TextInput,
@@ -9,6 +9,8 @@ import {
     Title,
     Alert,
     Paper,
+    Text, // Import Text
+    Anchor, // Import Anchor
     Container,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -104,6 +106,10 @@ const LoginPage: React.FC = () => {
                         <Button type="submit" loading={isLoading} fullWidth mt="xl">
                             Sign in
                         </Button>
+
+                        <Text ta="center" mt="md">
+                            Don't have an account? <Anchor component={Link} to="/create-account">Create an account</Anchor>
+                        </Text>
                     </Stack>
                 </form>
             </Paper>

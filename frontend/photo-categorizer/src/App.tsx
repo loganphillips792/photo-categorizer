@@ -7,6 +7,7 @@ import AllPhotosPage from "./pages/AllPhotosPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
+import CreateAccountPage from "./pages/CreateAccountPage"; // Import CreateAccountPage
 
 function App() {
     return (
@@ -26,7 +27,7 @@ function App() {
 
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
-            {/* Add other public routes here */}
+            <Route path="/create-account" element={<CreateAccountPage />} /> {/* Add route for CreateAccountPage */}
         </Routes>
     );
 }
