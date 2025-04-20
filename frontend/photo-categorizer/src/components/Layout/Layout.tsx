@@ -1,9 +1,11 @@
-import { ActionIcon, AppShell, Burger, Group, NavLink, ScrollArea, Text, UnstyledButton } from "@mantine/core"; // Import Text
+import { ActionIcon, AppShell, Box, Burger, Center, Group, NavLink, ScrollArea, Text, UnstyledButton } from "@mantine/core"; // Import Text, Center, Box
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight, IconLogout } from "@tabler/icons-react"; // Changed IconLogin to IconLogout
+import { Bug } from "lucide-react"; // Import Bug icon
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Import useAuth
+import classes from './Layout.module.css'; // Import CSS module
 
 const Layout: React.FC = () => {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -104,6 +106,18 @@ const Layout: React.FC = () => {
                 </ActionIcon>
                 <Outlet /> {/* Page content will be rendered here */}
             </AppShell.Main>
+
+            {/* Footer Section */}
+            <AppShell.Footer p="xs">
+                <Center>
+                    <Group gap="xs">
+                        <Text size="sm">© 2025</Text>
+                        <Text size="sm">•</Text>
+                        <Bug size={16} className={classes.rotatingBug} /> {/* Apply rotation class */}
+                        <Text size="sm">Still squashing bugs in production</Text>
+                    </Group>
+                </Center>
+            </AppShell.Footer>
         </AppShell>
     );
 };

@@ -1,16 +1,14 @@
-.layout {
-    display: flex;
-    /* Ensure layout takes full height if needed, adjust as necessary */
-    min-height: 100vh;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.content {
-    flex-grow: 1;
-    padding: 20px;
-    /* Add padding or margin to prevent content from hiding behind a fixed/absolute menu */
-    margin-left: 0; /* Adjust if the menu is always visible */
-    /* Example: Add margin-right if burger menu slides from right */
-    /* margin-right: 60px; */ /* Space for the burger icon */
+.rotatingBug {
+  animation: spin 2s linear infinite;
+  display: inline-block; /* Needed for transform to work correctly */
+  vertical-align: middle; /* Align icon better with text */
 }
-
-/* Add more specific layout styles as the design evolves */

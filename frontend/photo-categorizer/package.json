@@ -16,6 +16,7 @@
         "@mantine/hooks": "^7.17.3",
         "@tabler/icons-react": "^3.31.0",
         "install": "^0.13.0",
+        "lucide-react": "^0.501.0",
         "npm": "^11.2.0",
         "prettier-plugin-organize-imports": "^4.1.0",
         "react": "^19.0.0",

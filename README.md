@@ -115,3 +115,9 @@ curl -X POST \
   -H "Authorization: Bearer YOUR_REFRESH_TOKEN" \
   http://127.0.0.1:5000/refresh
 ```
+
+# TODO
+
+- Set up typescript + playwright
+- Python tests
+- Allow users to sign in through google
