@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { Loader, Center } from '@mantine/core'; // Assuming Mantine for loading state
+import { Center, Loader } from "@mantine/core"; // Assuming Mantine for loading state
+import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const ProtectedRoute: React.FC = () => {
     const { isAuthenticated, isLoading } = useAuth();
@@ -9,7 +9,7 @@ const ProtectedRoute: React.FC = () => {
     if (isLoading) {
         // Show a loading indicator while checking auth status
         return (
-            <Center style={{ height: '100vh' }}>
+            <Center style={{ height: "100vh" }}>
                 <Loader />
             </Center>
         );

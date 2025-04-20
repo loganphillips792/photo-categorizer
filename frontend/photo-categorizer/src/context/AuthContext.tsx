@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
 
 interface User {
     id: string;
@@ -27,14 +27,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setIsLoading(true);
         try {
             // Ping backend endpoint to check for valid session cookie
-            const response = await fetch('/api/check-auth', { // Assuming this endpoint exists
-                 method: 'GET', // Or POST, depending on backend implementation
-                 credentials: 'include' // Crucial for sending cookies
+            const response = await fetch("/api/check-auth", {
+                // Assuming this endpoint exists
+                method: "GET", // Or POST, depending on backend implementation
+                credentials: "include", // Crucial for sending cookies
             });
 
             if (response.ok) {
                 const userData = await response.json();
-                if (userData.user) { // Check if user data exists in response
+                if (userData.user) {
+                    // Check if user data exists in response
                     setIsAuthenticated(true);
                     setUser(userData.user); // Assuming backend returns { user: { ... } }
                 } else {
@@ -48,7 +50,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 setIsAuthenticated(false);
                 setUser(null);
             }
-
         } catch (error) {
             console.error("Auth check failed:", error);
             setIsAuthenticated(false);
@@ -72,9 +73,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const logout = async () => {
         // Call backend logout endpoint
         try {
-            await fetch('/api/logout', { // Ensure /api prefix is present
-                method: 'POST',
-                credentials: 'include', // Important to send cookies
+            await fetch("/api/logout", {
+                // Ensure /api prefix is present
+                method: "POST",
+                credentials: "include", // Important to send cookies
             });
         } catch (error) {
             console.error("Logout API call failed:", error);
@@ -86,7 +88,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
     };
 
-
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, isLoading, login, logout, checkAuthStatus }}>
             {children}
@@ -97,7 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 };

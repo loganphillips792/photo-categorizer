@@ -1,86 +1,97 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
-import { useAuth } from '../context/AuthContext'; // Import useAuth
 import {
-    TextInput,
-    PasswordInput,
-    Button,
-    Stack,
-    Title,
-    Alert,
-    Paper,
-    Text, // Import Text
-    Anchor, // Import Anchor
+    Alert, // Import Text
+    Anchor,
+    Button, // Import Anchor
     Container,
-} from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+    Paper,
+    PasswordInput,
+    Stack,
+    Text,
+    TextInput,
+    Title,
+} from "@mantine/core";
+import { IconAlertCircle } from "@tabler/icons-react";
+import React, { useCallback, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 const LoginPage: React.FC = () => {
-    const [username, setUsername] = useState(''); // Changed from email to username
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState(""); // Changed from email to username
+    const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const auth = useAuth(); // Get auth context
 
-    const handleLogin = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setIsLoading(true);
-        setError(null);
+    const handleLogin = useCallback(
+        async (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            setIsLoading(true);
+            setError(null);
 
-        // Basic validation
-        if (!username || !password) {
-            setError('Username and password are required.');
-            setIsLoading(false);
-            return;
-        }
-
-        console.log(`Attempting login for username: ${username}`);
-
-        try {
-            // Use relative path assuming proxy or same-origin deployment
-            const response = await fetch('/api/login', { // Added /api prefix
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Send cookies
-                body: JSON.stringify({ username: username, password: password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                // Use error message from backend if available
-                throw new Error(data.error || `Login failed: ${response.statusText}`);
+            // Basic validation
+            if (!username || !password) {
+                setError("Username and password are required.");
+                setIsLoading(false);
+                return;
             }
 
-            // Login successful! Call auth context login function
-            if (data.user) {
-                auth.login(data.user); // Update auth state
-                console.log('Login successful, user:', data.user);
-                navigate('/'); // Redirect to home page
-            } else {
-                // Handle unexpected success response without user data
-                 throw new Error('Login successful but no user data received.');
-            }
+            console.log(`Attempting login for username: ${username}`);
 
-        } catch (err) {
-            console.error('Login error:', err);
-            setError(err instanceof Error ? err.message : 'An unknown error occurred during login.');
-        } finally {
-            setIsLoading(false);
-        }
-    }, [username, password, navigate, auth]); // Added auth to dependencies
+            try {
+                // Use relative path assuming proxy or same-origin deployment
+                const response = await fetch("/api/login", {
+                    // Added /api prefix
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include", // Send cookies
+                    body: JSON.stringify({ username: username, password: password }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    // Use error message from backend if available
+                    throw new Error(data.error || `Login failed: ${response.statusText}`);
+                }
+
+                // Login successful! Call auth context login function
+                if (data.user) {
+                    auth.login(data.user); // Update auth state
+                    console.log("Login successful, user:", data.user);
+                    navigate("/"); // Redirect to home page
+                } else {
+                    // Handle unexpected success response without user data
+                    throw new Error("Login successful but no user data received.");
+                }
+            } catch (err) {
+                console.error("Login error:", err);
+                setError(err instanceof Error ? err.message : "An unknown error occurred during login.");
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        [username, password, navigate, auth],
+    ); // Added auth to dependencies
 
     return (
         <Container size="xs" px="xs">
-             <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                <Title ta="center" mb="lg">Login</Title>
+            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+                <Title ta="center" mb="lg">
+                    Login
+                </Title>
                 <form onSubmit={handleLogin}>
                     <Stack>
                         {error && (
-                            <Alert icon={<IconAlertCircle size="1rem" />} title="Login Error" color="red" withCloseButton onClose={() => setError(null)}>
+                            <Alert
+                                icon={<IconAlertCircle size="1rem" />}
+                                title="Login Error"
+                                color="red"
+                                withCloseButton
+                                onClose={() => setError(null)}
+                            >
                                 {error}
                             </Alert>
                         )}
@@ -91,7 +102,7 @@ const LoginPage: React.FC = () => {
                             placeholder="Your username" // Changed placeholder
                             value={username}
                             onChange={(event) => setUsername(event.currentTarget.value)}
-                            error={error && error.includes('Username') ? error : undefined}
+                            error={error && error.includes("Username") ? error : undefined}
                         />
 
                         <PasswordInput
@@ -100,7 +111,7 @@ const LoginPage: React.FC = () => {
                             placeholder="Your password"
                             value={password}
                             onChange={(event) => setPassword(event.currentTarget.value)}
-                            error={error && error.includes('password') ? error : undefined} // Basic error highlighting
+                            error={error && error.includes("password") ? error : undefined} // Basic error highlighting
                         />
 
                         <Button type="submit" loading={isLoading} fullWidth mt="xl">
@@ -108,7 +119,10 @@ const LoginPage: React.FC = () => {
                         </Button>
 
                         <Text ta="center" mt="md">
-                            Don't have an account? <Anchor component={Link} to="/create-account">Create an account</Anchor>
+                            Don't have an account?{" "}
+                            <Anchor component={Link} to="/create-account">
+                                Create an account
+                            </Anchor>
                         </Text>
                     </Stack>
                 </form>

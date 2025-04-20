@@ -1,11 +1,11 @@
-import { ActionIcon, AppShell, Box, Burger, Center, Group, NavLink, ScrollArea, Text, UnstyledButton } from "@mantine/core"; // Import Text, Center, Box
+import { ActionIcon, AppShell, Burger, Center, Group, NavLink, ScrollArea, Text, UnstyledButton } from "@mantine/core"; // Import Text, Center, Box
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronLeft, IconChevronRight, IconLogout } from "@tabler/icons-react"; // Changed IconLogin to IconLogout
 import { Bug } from "lucide-react"; // Import Bug icon
 import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Import useAuth
-import classes from './Layout.module.css'; // Import CSS module
+import classes from "./Layout.module.css"; // Import CSS module
 
 const Layout: React.FC = () => {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -38,7 +38,9 @@ const Layout: React.FC = () => {
                     </UnstyledButton>
                     {/* Add Welcome message if user is logged in */}
                     {user && (
-                        <Text size="sm" ml="auto">Welcome, {user.username}!</Text>
+                        <Text size="sm" ml="auto">
+                            Welcome, {user.username}!
+                        </Text>
                     )}
                     {/* TODO: Consider adding logout button here as well/instead? */}
                 </Group>
@@ -71,10 +73,10 @@ const Layout: React.FC = () => {
                             // No need to navigate here, ProtectedRoute will handle redirect
                             if (mobileOpened) toggleMobile();
                         }}
-                        style={{ marginTop: 'auto' }}
+                        style={{ marginTop: "auto" }}
                     />
-                     {/* Login button removed */}
-                     {/*
+                    {/* Login button removed */}
+                    {/*
                      <Group justify="center" mt="md">
                          <ActionIcon variant="default" size="lg" onClick={() => navigate('/login')}>
                              <IconLogin size="1.1rem" stroke={1.5} />

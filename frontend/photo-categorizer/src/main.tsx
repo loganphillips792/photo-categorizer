@@ -11,7 +11,9 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <MantineProvider>
             <BrowserRouter>
-                <AuthProvider> {/* Wrap App with AuthProvider */}
+                <AuthProvider>
+                    {" "}
+                    {/* Wrap App with AuthProvider */}
                     <App />
                 </AuthProvider>
             </BrowserRouter>

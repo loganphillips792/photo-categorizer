@@ -5,15 +5,17 @@ import PhotoUpload from "./components/PhotoUpload/PhotoUpload";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"; // Import ProtectedRoute
 import AllPhotosPage from "./pages/AllPhotosPage";
 import CategoriesPage from "./pages/CategoriesPage";
-import SettingsPage from "./pages/SettingsPage";
-import LoginPage from "./pages/LoginPage";
 import CreateAccountPage from "./pages/CreateAccountPage"; // Import CreateAccountPage
+import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
     return (
         <Routes>
             {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}> {/* Parent route for protected content */}
+            <Route element={<ProtectedRoute />}>
+                {" "}
+                {/* Parent route for protected content */}
                 {/* Routes using Layout */}
                 <Route path="/" element={<Layout />}>
                     <Route index element={<PhotoUpload />} /> {/* Default page */}
@@ -24,7 +26,6 @@ function App() {
                 </Route>
                 {/* Add other protected routes that DON'T use the Layout here */}
             </Route>
-
             {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/create-account" element={<CreateAccountPage />} /> {/* Add route for CreateAccountPage */}
