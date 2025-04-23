@@ -7,8 +7,8 @@ import AllPhotosPage from "./pages/AllPhotosPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import CreateAccountPage from "./pages/CreateAccountPage"; // Import CreateAccountPage
 import LoginPage from "./pages/LoginPage";
-import SettingsPage from "./pages/SettingsPage";
 import PremiumAccessPage from "./pages/PremiumAccessPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
     return (
