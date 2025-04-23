@@ -3,7 +3,8 @@ import React, { createContext, ReactNode, useContext, useEffect, useState } from
 interface User {
     id: string;
     username: string;
-    role: string;
+   role: string;
+   isSubscriber: boolean;
 }
 
 interface AuthContextType {
@@ -38,7 +39,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 if (userData.user) {
                     // Check if user data exists in response
                     setIsAuthenticated(true);
-                    setUser(userData.user); // Assuming backend returns { user: { ... } }
+                    setUser(userData.user); // Assuming backend returns { user: { ..., isSubscriber: boolean } }
                 } else {
                     // Response OK, but no user data? Treat as not authenticated.
                     console.warn("Auth check successful but no user data received.");

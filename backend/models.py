@@ -7,6 +7,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128)) # Renamed from password for clarity
     role = db.Column(db.String(80), nullable=False, default='user') # Added role field
+    is_subscriber = db.Column(db.Boolean, nullable=False, default=False) # Added is_subscriber field
 
     # Removed the empty line above
     def set_password(self, password):

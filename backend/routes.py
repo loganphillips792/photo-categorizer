@@ -332,3 +332,27 @@ def upload_photos():
     except Exception as e:
         current_app.logger.error(f'Error during file upload processing: {e}')
         return jsonify({'error': f'Internal server error during upload: {str(e)}'}), 500
+
+# --- Premium Access Route ---
+
+@main_bp.route('/premium-access', methods=['GET'])
+@jwt_required()
+def premium_access():
+    """Checks if the user is a paid subscriber and returns premium content."""
+    # abstract this logic into a @subscription_needed
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        if not user.is_subscriber:
+            return jsonify({"error": "You must be a paid subscriber to access this content."}), 403
+
+        # Return premium content
+        return jsonify({"message": "Welcome to the premium access area!"}), 200
+
+    except Exception as e:
+        current_app.logger.error(f'Error during premium access: {e}')
+        return jsonify({'error': f'Internal server error during premium access: {str(e)}'}), 500
