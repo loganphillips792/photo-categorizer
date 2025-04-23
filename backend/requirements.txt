@@ -11,3 +11,6 @@ pytz
 gunicorn
 flask-login
 flask-jwt-extended
+black
+bcrypt
+ruff

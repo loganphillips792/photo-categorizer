@@ -16,6 +16,10 @@ npm run lint
 
 # Backend
 
+Running tests: `pytest`
+Format repo: `cd backend && black .`
+Run Linter: `cd backend && ruff check`
+
 ## Without Docker
 
 ### Installing Python dependencies
@@ -35,19 +39,12 @@ npm run lint
 
 ## With Docker
 
+TODO: fix this
 cd backend
 docker build -t flask-app -f ./build/Dockerfile .
 docker run -d -p 5001:5000 --env-file .env --name backend-container-2 flask-app
 
 # Frontend routes
-
-- /
-- /create-blog-post
-- /all-blog-posts
-- /blog/:blogPostId
-- /login
-- /admin (protected route)
-- not found
 
 # API Commands
 
