@@ -14,3 +14,4 @@ flask-jwt-extended
 black
 bcrypt
 ruff
+stripe
