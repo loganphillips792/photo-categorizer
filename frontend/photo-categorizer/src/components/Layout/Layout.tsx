@@ -20,6 +20,7 @@ const Layout: React.FC = () => {
         { label: "All Photos", path: "/all" }, // Correct path for AllPhotosPage
         { label: "Categories", path: "/categories" }, // Added Categories link
         { label: "Settings", path: "/settings" },
+        { label: "Premium Access", path: "/premium" },
         // Removed Login link from main navLinks
     ];
 

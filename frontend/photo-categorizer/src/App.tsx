@@ -8,6 +8,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import CreateAccountPage from "./pages/CreateAccountPage"; // Import CreateAccountPage
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
+import PremiumAccessPage from "./pages/PremiumAccessPage";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                     <Route path="all" element={<AllPhotosPage />} />
                     <Route path="categories" element={<CategoriesPage />} />
                     <Route path="settings" element={<SettingsPage />} />
+                    <Route path="premium" element={<PremiumAccessPage />} />
                     {/* Add other pages that need the layout and protection here */}
                 </Route>
                 {/* Add other protected routes that DON'T use the Layout here */}

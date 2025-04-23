@@ -130,6 +130,23 @@ const SettingsPage: React.FC = () => {
                         <Text>Loading user information...</Text>
                     )}
                 </Paper>
+                 <Paper withBorder shadow="sm" p="lg" radius="md">
+                    <Title order={3} mb="md">
+                        Subscription Status
+                    </Title>
+                    <Text>
+                        Your current subscription: Free
+                    </Text>
+                </Paper>
+                <Paper withBorder shadow="sm" p="lg" radius="md">
+                    <Title order={3} mb="md">
+                        Upgrade Account
+                    </Title>
+                    <Text>
+                        Upgrade your account to unlock premium features and increased storage.
+                    </Text>
+                    <Button mt="md">Upgrade Now</Button>
+                </Paper>
             </Stack>
         </Container>
     );
