@@ -118,3 +118,9 @@ curl -X POST \
 - Set up typescript + playwright
 - Python tests
 - Allow users to sign in through google
+- Deploy to Droplet via docker and without: https://github.com/loganphillips792/react-flask-custom-blog/blob/main/.github/workflows/production.yml
+- Integrate Stripe
+  - [Integrating Stripe with Flask: A Step-by-Step Tutorial : r/flask](https://www.reddit.com/r/flask/comments/1fdzhr7/integrating_stripe_with_flask_a_stepbystep/)
+  - https://ploomber.io/blog/stripe-flask/
+  - https://docs.stripe.com/billing/subscriptions/build-subscriptions
+  - https://stripe.com
