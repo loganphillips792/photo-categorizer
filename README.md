@@ -1,5 +1,9 @@
 # photo-categorizer
 
+# TODO
+
+- Add swagger file for API; include curl commands
+
 # Frontend
 
 1. cd frontend/frontend
