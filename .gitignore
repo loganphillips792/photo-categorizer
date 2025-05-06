@@ -3,3 +3,4 @@
 backend/__pycache__/
 backend/models/__pycache__
 backend/instance/
+backend/tests/__pycache__
